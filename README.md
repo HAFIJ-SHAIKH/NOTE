@@ -1,0 +1,2 @@
+# NOTE
+Smart assistant
