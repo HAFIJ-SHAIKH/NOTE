@@ -1,0 +1,17 @@
+{
+  "format": "layers-model",
+  "generatedBy": "note-fake",
+  "convertedBy": "note-fake",
+  "modelTopology": {
+    "class_name": "Sequential",
+    "config": []
+  },
+  "weightsManifest": [
+    {
+      "paths": [
+        "weights.bin"
+      ],
+      "weights": []
+    }
+  ]
+}
