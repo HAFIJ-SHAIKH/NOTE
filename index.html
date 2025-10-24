@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Note</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Tesseract.js (OCR) -->
+  <script src="https://unpkg.com/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+  <!-- TF.js for model-based symbol detection (included for GitHub Pages) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.3.0/dist/tf.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <!-- keep original UI design here - DO NOT EDIT layout -->
+      <div class="logo">Note</div>
+      <!-- intentionally no greetings on main screen -->
+    </header>
+
+    <main class="chat-area">
+      <div id="chat" class="chat-messages" role="log" aria-live="polite"></div>
+
+      <div class="controls">
+        <input id="textInput" type="text" placeholder="Type a message" aria-label="Message input" />
+        <input id="imageInput" type="file" accept="image/*" aria-label="Upload image" />
+        <button id="sendBtn" aria-label="Send">Send</button>
+      </div>
+
+      <!-- version tag (very small, bottom-right below send button) -->
+      <small id="version-tag">note.infinity-Ⅰ</small>
+    </main>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
