@@ -1,0 +1,20 @@
+{
+  "hello": "Hi! How can I help you today?",
+  "hi": "Hello! Ready to assist.",
+  "hey": "Hey there! What can I do for you?",
+  "how are you": "I'm ready and fully operational.",
+  "what is your name": "I'm Note, your assistant.",
+  "thanks": "You're welcome!",
+  "who made you": "I was built to help with math, images, and conversations.",
+  "good morning": "Good morning! How's your day starting?",
+  "good night": "Good night! Sleep well.",
+  "tell me a joke": "Why did the computer show up at work late? It had a hard drive!",
+  "solve for x": "Sure, please provide the full equation you want me to solve.",
+  "explain fraction addition": "To add fractions, make sure the denominators are the same, then add the numerators.",
+  "convert 1/2 to decimal": "1/2 as a decimal is 0.5",
+  "formula for area of circle": "Area = \u03c0 \u00d7 r\u00b2",
+  "formula for circumference of circle": "Circumference = 2 \u00d7 \u03c0 \u00d7 r",
+  "derivative of x^2": "The derivative of x^2 is 2x",
+  "integrate x^2": "The integral of x^2 dx is (1/3)x^3 + C",
+  "default": "I'm still learning. Try rephrasing or ask a math/image question."
+}
