@@ -1,16 +1,8 @@
+// (The main.js file from the previous response goes here)
 // Import the pipeline function from transformers.js
 import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@latest';
 
 document.addEventListener("DOMContentLoaded", function() {
-  // --- FIX FOR SCROLLING ---
-  // The main-content CSS was preventing scrolling. Let's override it.
-  const style = document.createElement('style');
-  style.innerHTML = `
-    .main-content { overflow: visible !important; }
-    .chat-container { overflow-y: auto !important; }
-  `;
-  document.head.appendChild(style);
-
   // --- DOM ELEMENTS ---
   const chatContainer = document.getElementById("chat-container");
   const chatDiv = document.getElementById("chat");
@@ -247,4 +239,5 @@ document.addEventListener("DOMContentLoaded", function() {
     addMessage(modeMessage, "note", "assistant-highlight");
   });
 
-  addMessage("Hello! I'm NOTE. I can solve math problems, describe images, and answer your questions. How can I help you today?", "note", "
+  addMessage("Hello! I'm NOTE. I can solve math problems, describe images, and answer your questions. How can I help you today?", "note", "assistant-highlight");
+});
