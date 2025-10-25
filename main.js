@@ -1,4 +1,143 @@
+// ===================================================================
+// NOTE - Cosmic Midnight (main.js - Simplified Diagnostic Version)
+// This version ONLY tests if the buttons and basic UI interactions work.
+// It removes all AI and complex logic to isolate the problem.
+// ===================================================================
 
+// Wait for the entire HTML document to be loaded and parsed before running any script.
+document.addEventListener("DOMContentLoaded", function() {
+
+    console.log("DEBUG: Script loaded and DOM is ready.");
+
+    // --- 1. ELEMENT AND VARIABLE INITIALIZATION ---
+    // Grab all the necessary DOM elements.
+    const chatContainer = document.getElementById("chat-container");
+    const chatDiv = document.getElementById("chat");
+    const userInput = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const uploadBtn = document.getElementById("uploadBtn");
+    const fileInput = document.getElementById("fileInput");
+    const scrollToBottomBtn = document.getElementById("scrollToBottomBtn");
+    const modeToggleBtn = document.getElementById("modeToggleBtn");
+
+    // --- DEBUG: Check if elements were found ---
+    if (!chatDiv) console.error("DEBUG ERROR: Element with ID 'chat' not found.");
+    if (!userInput) console.error("DEBUG ERROR: Element with ID 'userInput' not found.");
+    if (!sendBtn) console.error("DEBUG ERROR: Element with ID 'sendBtn' not found.");
+    if (!uploadBtn) console.error("DEBUG ERROR: Element with ID 'uploadBtn' not found.");
+    if (!fileInput) console.error("DEBUG ERROR: Element with ID 'fileInput' not found.");
+    if (!scrollToBottomBtn) console.error("DEBUG ERROR: Element with ID 'scrollToBottomBtn' not found.");
+    if (!modeToggleBtn) console.error("DEBUG ERROR: Element with ID 'modeToggleBtn' not found.");
+    if (!chatContainer) console.error("DEBUG ERROR: Element with ID 'chat-container' not found.");
+    
+    console.log("DEBUG: All elements checked.");
+
+    // --- 2. CORE HELPER FUNCTION ---
+    // A simple function to add a message to the chat.
+    function addMessage(text, sender) {
+        console.log(`DEBUG: Adding message: "${text}" from ${sender}`);
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', sender);
+
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.classList.add('message-bubble');
+        bubbleDiv.textContent = text;
+
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const timestampSpan = document.createElement('span');
+        timestampSpan.classList.add('timestamp');
+        timestampSpan.textContent = timestamp;
+
+        messageDiv.appendChild(bubbleDiv);
+        messageDiv.appendChild(timestampSpan);
+        chatDiv.appendChild(messageDiv);
+
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+    }
+
+    // --- 3. SIMPLE EVENT HANDLERS ---
+    // These are simple functions to test if the button clicks are being detected.
+
+    function handleSendClick() {
+        console.log("DEBUG: Send button was clicked!");
+        const message = userInput.value.trim();
+        if (message) {
+            addMessage(message, "user");
+            userInput.value = '';
+            addMessage("Send button is working! I received your message.", "note");
+        } else {
+            console.log("DEBUG: Input was empty, doing nothing.");
+        }
+    }
+
+    function handleUploadClick() {
+        console.log("DEBUG: Upload button was clicked!");
+        addMessage("Upload button is working! (File upload logic is disabled in this test version).", "note");
+    }
+
+    function handleScrollToBottomClick() {
+        console.log("DEBUG: Scroll to bottom button was clicked!");
+        addMessage("Scroll to bottom button is working!", "note");
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+    }
+
+    function handleModeToggleClick() {
+        console.log("DEBUG: Mode toggle button was clicked!");
+        addMessage("Mode toggle button is working!", "note");
+    }
+
+    function handleChatScroll() {
+        // This function runs every time the chat is scrolled.
+        // We can add a log message to see if it's working.
+        // console.log("DEBUG: Chat is being scrolled.");
+        const isAtBottom = chatContainer.scrollTop + chatContainer.clientHeight >= chatContainer.scrollHeight - 50;
+        if (isAtBottom) {
+            scrollToBottomBtn.classList.add('hidden');
+        } else {
+            scrollToBottomBtn.classList.remove('hidden');
+        }
+    }
+
+    // --- 4. ATTACH EVENT LISTENERS ---
+    // This is the most important part. We connect the buttons to the functions.
+    console.log("DEBUG: Attaching event listeners...");
+
+    if (sendBtn) {
+        sendBtn.addEventListener('click', handleSendClick);
+        console.log("DEBUG: Listener attached to sendBtn.");
+    }
+    if (userInput) {
+        userInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                handleSendClick();
+            }
+        });
+        console.log("DEBUG: Listener attached to userInput.");
+    }
+    if (uploadBtn) {
+        uploadBtn.addEventListener('click', handleUploadClick);
+        console.log("DEBUG: Listener attached to uploadBtn.");
+    }
+    if (scrollToBottomBtn) {
+        scrollToBottomBtn.addEventListener('click', handleScrollToBottomClick);
+        console.log("DEBUG: Listener attached to scrollToBottomBtn.");
+    }
+    if (modeToggleBtn) {
+        modeToggleBtn.addEventListener('click', handleModeToggleClick);
+        console.log("DEBUG: Listener attached to modeToggleBtn.");
+    }
+    if (chatContainer) {
+        chatContainer.addEventListener('scroll', handleChatScroll);
+        console.log("DEBUG: Listener attached to chatContainer.");
+    }
+
+    console.log("DEBUG: All event listeners attached. Setup complete.");
+
+    // Add an initial message to confirm the script is running.
+    addMessage("Diagnostic mode active. The buttons should now work. Try clicking them!", "note");
+
+});
 // ===================================================================
 // NOTE - Cosmic Midnight (main.js)
 // This file contains all the logic for the application.
