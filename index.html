@@ -1,63 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NOTE - Cosmic Midnight</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-</head>
-<body>
-
-
-  <!-- Simple Moon and Stars Background -->
-  <div class="cosmos">
-    <div class="moon"></div>
-    <div class="stars"></div>
-  </div>
-
-
-  <div class="app-container">
-    <!-- Main Chat Area -->
-    <main class="main-content">
-      <header class="main-header">
-        <h1 class="conversation-title">
-          NOTE
-          <span class="title-credit">by hafij shaikh</span>
-        </h1>
-      </header>
-
-
-      <div class="chat-container" id="chat-container">
-        <div id="chat">
-          <!-- No initial messages -->
-        </div>
-      </div>
-    </main>
-  </div>
-
-
-  <!-- Fixed Input Area -->
-  <footer class="chat-input-container">
-    <button class="attachment-btn" id="uploadBtn"><i class="fas fa-paperclip"></i></button>
-    <input type="file" id="fileInput" accept="image/*" style="display:none">
-    <input type="text" id="userInput" placeholder="Type a message...">
-    <button class="send-btn" id="sendBtn">Send</button>
-  </footer>
-
-
-  <!-- New Action Buttons -->
-  <button class="action-btn scroll-to-bottom-btn" id="scrollToBottomBtn" title="Scroll to Bottom">
-    <i class="fas fa-chevron-down"></i>
-  </button>
-  <button class="action-btn mode-toggle-btn" id="modeToggleBtn" title="Toggle Conversation Mode">
-    <i class="fas fa-brain"></i>
-  </button>
-
-
-  <!-- Page Watermark -->
-  <div class="page-watermark">note.infinity-Ⅰ</div>
-
-
+  
   <!-- Include Tesseract.js for OCR -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
   <!-- Include Math.js for advanced calculations -->
@@ -68,7 +16,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0/dist/transformers.min.js"></script>
   <!-- Include TensorFlow.js for image preprocessing -->
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
-
 
   <style>
     /* --- Cosmic Midnight Color Palette --- */
@@ -86,14 +33,12 @@
       --glow-color: rgba(224, 230, 241, 0.3);
     }
 
-
     html, body { margin: 0; padding: 0; height: 100%; min-height: 100%; }
     * { box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: var(--bg-gradient-start); color: var(--text-primary); overflow: hidden; position: relative;
     }
-
 
     /* --- Simple Moon and Stars Background --- */
     .cosmos { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
@@ -109,18 +54,27 @@
     }
     @keyframes twinkle { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.8; } }
 
-
     .app-container { display: flex; flex-direction: column; height: 100vh; position: relative; z-index: 1; }
     .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-    .main-header { display: flex; justify-content: center; align-items: center; padding: 20px; flex-shrink: 0; background: transparent; }
-    .conversation-title { font-size: 1.5rem; font-weight: 600; display: flex; align-items: baseline; gap: 8px; color: var(--accent); text-shadow: 0 0 10px var(--glow-color); }
+    .main-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 20px; 
+      flex-shrink: 0; 
+      background: transparent; 
+    }
+    .conversation-title { font-size: 1.5rem; font-weight: 600; display: flex; align-items: baseline; gap: 8px; color: var(--accent); text-shadow: 0 0 5px var(--glow-color); }
     .title-credit { font-size: 0.7rem; color: var(--text-muted); font-weight: 400; text-shadow: none; }
-
+    
+    .header-actions {
+        display: flex;
+        gap: 10px;
+    }
 
     .chat-container { flex-grow: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; background: transparent; scrollbar-width: none; -ms-overflow-style: none; }
     .chat-container::-webkit-scrollbar { display: none; }
     #chat { display: flex; flex-direction: column; gap: 15px; }
-
 
     /* --- Messages --- */
     .message { 
@@ -174,7 +128,6 @@
       margin-top: 10px;
     }
 
-
     /* --- Highlight for Important Assistant Messages --- */
     .message.note.assistant-highlight {
       border: 1px solid var(--accent);
@@ -201,8 +154,7 @@
         white-space: pre-wrap;
     }
 
-
-    /* --- Infinity Loading Animation (from original file) --- */
+    /* --- Infinity Loading Animation --- */
     .loading-indicator {
       display: flex; align-items: center; gap: 10px; padding: 15px 20px;
       background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -226,7 +178,6 @@
       0%, 100% { opacity: 0.8; } 
       50% { opacity: 1; } 
     }
-
 
     /* --- Fixed Input Area --- */
     .chat-input-container {
@@ -257,24 +208,20 @@
     #userInput:focus { border-color: var(--accent); background: rgba(255, 255, 255, 0.08); }
     #userInput::placeholder { color: var(--text-muted); }
 
-
-    /* --- New Action Buttons --- */
+    /* --- Action Buttons in Header --- */
     .action-btn {
-      position: fixed; bottom: 100px; width: 48px; height: 48px; border-radius: 50%;
+      width: 40px; height: 40px; border-radius: 50%;
       background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      border: 1px solid var(--glass-border); color: var(--accent); font-size: 1.1rem;
+      border: 1px solid var(--glass-border); color: var(--accent); font-size: 1rem;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s ease; box-shadow: 0 4px 15px var(--shadow-color); z-index: 15;
+      transition: all 0.2s ease; box-shadow: 0 4px 15px var(--shadow-color);
     }
     .action-btn:hover {
       background: rgba(255, 255, 255, 0.1); color: var(--accent-hover);
       box-shadow: 0 0 15px var(--glow-color); transform: scale(1.05);
     }
     .action-btn:active { transform: scale(0.95); }
-    .scroll-to-bottom-btn { right: 20px; }
-    .mode-toggle-btn { left: 20px; }
-    .scroll-to-bottom-btn.hidden { opacity: 0; pointer-events: none; transform: scale(0.8); }
-
+    .scroll-to-bottom-btn.hidden { opacity: 0.4; pointer-events: none; transform: scale(0.9); }
 
     .page-watermark {
       position: fixed; bottom: 5px; right: 5px; font-size: 0.6rem;
@@ -282,961 +229,53 @@
       opacity: 0.7; pointer-events: none; z-index: 21;
     }
   </style>
-
-
-  <script>
-    document.addEventListener("DOMContentLoaded", async function() {
-      const chatContainer = document.getElementById("chat-container");
-      const chatDiv = document.getElementById("chat");
-      const userInput = document.getElementById("userInput");
-      const sendBtn = document.getElementById("sendBtn");
-      const uploadBtn = document.getElementById("uploadBtn");
-      const fileInput = document.getElementById("fileInput");
-      const scrollToBottomBtn = document.getElementById("scrollToBottomBtn");
-      const modeToggleBtn = document.getElementById("modeToggleBtn");
-
-
-      let isEducationalMode = false;
-      let messageIdCounter = 0;
-      let conversationHistory = [];
-      let activeLoadingProcesses = 0;
-      let isLiteMode = false;
-      
-      let models = {};
-      let modelStatus = {
-        translator: 'idle',
-        captioner: 'idle',
-        detector: 'idle',
-        sentiment: 'idle',
-        qa: 'idle',
-        generator: 'idle'
-      };
-
-
-      // --- FIX: Centralized model configuration for robust retry mechanism ---
-      const modelConfigs = {
-        translator: { task: 'translation', modelId: 'Xenova/opus-mt-en-fr' },
-        captioner: { task: 'image-to-text', modelId: 'Xenova/blip-image-captioning-base' },
-        detector: { task: 'object-detection', modelId: 'Xenova/detr-resnet-50' },
-        // These are not actively used but are included for status completeness
-        sentiment: { task: 'text-classification', modelId: 'Xenova/distilbert-base-uncased-finetuned-sst-2-english' },
-        qa: { task: 'question-answering', modelId: 'Xenova/distilbert-base-cased-distilled-squad' },
-        generator: { task: 'text2text-generation', modelId: 'Xenova/flan-t5-small' }
-      };
-
-
-      // --- STATELESS DATA STORAGE (RAM ONLY) ---
-      let noteContent = {
-        text: "",
-        images: [],
-        extractedText: [],
-        summaries: [],
-        actionItems: [],
-        multimodalDescriptions: []
-      };
-
-
-      // --- AI PROCESSING IMPROVEMENTS ---
-      const systemPrompt = `You are NOTE, an intelligent assistant that helps users understand and interact with their notes. 
-      You have access to the user's current note content, which may include text, images, and extracted information.
-      Always provide accurate, helpful responses based on the available content.
-      When citing information from the notes, reference the source (e.g., "from the uploaded image" or "mentioned in the text").
-      For calculations, use precise mathematical operations.
-      Maintain a professional, helpful tone in all responses.`;
-
-
-      addMessage("Hello! I'm NOTE. I can now process your notes, images, and queries with enhanced AI capabilities. Upload an image or type a message to begin.", "note");
-
-
-      // --- SIMPLIFIED MODEL LOADING ---
-      async function loadModel(modelName, isRetry = false) {
-        if (modelStatus[modelName] === 'ready') return models[modelName];
-        if (modelStatus[modelName] === 'loading') return null;
-
-
-        const config = modelConfigs[modelName];
-        if (!config) {
-            console.error(`Configuration for model "${modelName}" not found.`);
-            return null;
-        }
-
-
-        if (isRetry) modelStatus[modelName] = 'idle';
-        modelStatus[modelName] = 'loading';
-        showLoading();
-        
-        try {
-          const timeoutPromise = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Model loading timed out.')), 90000)
-          );
-          
-          const model = await Promise.race([
-            pipeline(config.task, config.modelId),
-            timeoutPromise
-          ]);
-          
-          models[modelName] = model;
-          modelStatus[modelName] = 'ready';
-          hideLoading();
-          if (modelName === 'generator' && isLiteMode) {
-              isLiteMode = false;
-              addMessage("✅ Full AI capabilities restored! I'm ready for complex questions.", "note");
-          }
-          return model;
-        } catch (error) {
-          modelStatus[modelName] = 'retry';
-          console.error(`Failed to load ${modelName} model:`, error);
-          hideLoading();
-          
-          if (modelName === 'generator' && !isLiteMode) {
-              isLiteMode = true;
-              addMessage("⚠️ My advanced AI model failed to load. I'm switching to Lite Mode to continue helping you. You can try typing 'retry generator' to restore full features.", "note", "assistant-highlight");
-          } else {
-              addMessage(`Error: The ${modelName} model failed to load. Type 'retry ${modelName}' to try again.`, "note");
-          }
-          return null;
-        }
-      }
-      
-      // --- UI HELPERS ---
-      function showLoading() { 
-        activeLoadingProcesses++;
-        if (activeLoadingProcesses === 1) {
-          hideLoading();
-          const loaderDiv = document.createElement('div'); 
-          loaderDiv.classList.add('message', 'note', 'loading-indicator-wrapper'); 
-          loaderDiv.innerHTML = `<div class="loading-indicator"><svg class="infinity-loader" viewBox="0 0 100 40"><path d="M20,20 Q30,5 40,20 T60,20 T80,20" /></svg></div>`; 
-          chatDiv.appendChild(loaderDiv); 
-          chatContainer.scrollTop = chatContainer.scrollHeight; 
-        }
-      }
-      function hideLoading() { 
-        activeLoadingProcesses--;
-        if (activeLoadingProcesses <= 0) {
-          activeLoadingProcesses = 0;
-          const existingLoader = chatDiv.querySelector('.loading-indicator-wrapper'); 
-          if (existingLoader) { existingLoader.remove(); }
-        }
-      }
-      
-      function addMessage(text, sender, extraClass = '') {
-        const messageDiv = document.createElement('div'); 
-        messageDiv.classList.add('message', sender);
-        if(extraClass) messageDiv.classList.add(extraClass);
-        
-        const bubbleDiv = document.createElement('div'); 
-        bubbleDiv.classList.add('message-bubble'); 
-        bubbleDiv.textContent = text;
-        
-        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const timestampSpan = document.createElement('span'); 
-        timestampSpan.classList.add('timestamp'); 
-        timestampSpan.textContent = timestamp;
-
-
-        messageDiv.appendChild(bubbleDiv); 
-        messageDiv.appendChild(timestampSpan); 
-        
-        chatDiv.appendChild(messageDiv);
-        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
-        return messageDiv;
-      }
-
-
-      function addStreamingMessage(text, sender, extraClass = '') {
-        const messageDiv = document.createElement('div'); 
-        messageDiv.classList.add('message', sender);
-        if(extraClass) messageDiv.classList.add(extraClass);
-        
-        const bubbleDiv = document.createElement('div'); 
-        bubbleDiv.classList.add('message-bubble'); 
-        
-        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const timestampSpan = document.createElement('span'); 
-        timestampSpan.classList.add('timestamp'); 
-        timestampSpan.textContent = timestamp;
-
-
-        messageDiv.appendChild(bubbleDiv); 
-        messageDiv.appendChild(timestampSpan); 
-        
-        chatDiv.appendChild(messageDiv);
-        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
-        
-        return {
-          messageDiv,
-          bubbleDiv,
-          appendText: function(text) {
-            bubbleDiv.textContent += text;
-            chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
-          }
-        };
-      }
-
-
-      function updateConversationHistory(role, content) {
-        conversationHistory.push({ role, content, timestamp: Date.now() });
-        if (conversationHistory.length > 20) {
-          conversationHistory = conversationHistory.slice(-20);
-        }
-      }
-      
-      // --- CORE FEATURE FUNCTIONS ---
-      async function handleWikipedia(query) {
-        try {
-          const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`;
-          const summaryResponse = await fetch(summaryUrl);
-          
-          if (summaryResponse.ok) {
-            const data = await summaryResponse.json();
-            return data.extract || "I found a page, but it doesn't have a summary.";
-          } else {
-            const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
-            const searchResponse = await fetch(searchUrl);
-            const searchData = await searchResponse.json();
-            
-            if (searchData.query.search.length > 0) {
-              const title = searchData.query.search[0].title;
-              return await handleWikipedia(title);
-            } else {
-              return `Sorry, I couldn't find a Wikipedia article for "${query}".`;
-            }
-          }
-        } catch (error) {
-          console.error("Wikipedia error:", error);
-          return `Sorry, I had trouble accessing Wikipedia. Please try again later.`;
-        }
-      }
-
-
-      function handleMath(expression) {
-        try {
-          const result = math.evaluate(expression);
-          return `The result is: ${result}`;
-        } catch (error) {
-          return 'Invalid mathematical expression. Please check your syntax.';
-        }
-      }
-
-
-      function handleChart(dataString) {
-        const dataPairs = dataString.split(',');
-        const labels = [];
-        const data = [];
-        for (const pair of dataPairs) {
-          const [label, value] = pair.split(':').map(s => s.trim());
-          if (label && !isNaN(value)) {
-            labels.push(label);
-            data.push(parseFloat(value));
-          }
-        }
-        if (labels.length === 0) return "Invalid chart data. Use format: 'label:value, label:value'";
-
-
-        const messageElement = addMessage("", "note");
-        const bubble = messageElement.querySelector('.message-bubble');
-        bubble.textContent = "Here is your chart:";
-        
-        const canvas = document.createElement('canvas');
-        bubble.appendChild(canvas);
-        
-        new Chart(canvas, {
-          type: 'bar',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'Data',
-              data: data,
-              backgroundColor: 'rgba(224, 230, 241, 0.5)',
-              borderColor: 'rgba(224, 230, 241, 1)',
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: { display: false },
-              title: { display: true, text: 'Custom Chart', color: '#b8c5d6' }
-            },
-            scales: {
-              y: { beginAtZero: true, ticks: { color: '#a0b0c5' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-              x: { ticks: { color: '#a0b0c5' }, grid: { color: 'rgba(255,255,255,0.1)' } }
-            }
-          }
-        });
-        return null;
-      }
-
-
-      // --- ADVANCED IMAGE PRE-PROCESSING FOR OCR ---
-      async function preprocessImageForOCR(imageElement) {
-        try {
-          // Load the image as a tensor
-          const imageTensor = tf.browser.fromPixels(imageElement);
-          
-          // Convert to grayscale
-          const grayscaleTensor = tf.image.rgbToGrayscale(imageTensor);
-          
-          // Apply contrast enhancement
-          const normalized = tf.div(grayscaleTensor, 255);
-          const adjusted = tf.mul(tf.pow(normalized, 0.5), 255);
-          
-          // Apply noise reduction (simple median filter)
-          const expandedDims = adjusted.expandDims(0);
-          const denoised = tf.image.medianFilter(expandedDims, 3);
-          
-          // Convert back to image element
-          const canvas = document.createElement('canvas');
-          await tf.browser.toPixels(denoised.squeeze(), canvas);
-          
-          // Clean up tensors
-          imageTensor.dispose();
-          grayscaleTensor.dispose();
-          normalized.dispose();
-          adjusted.dispose();
-          expandedDims.dispose();
-          denoised.dispose();
-          
-          return canvas.toDataURL();
-        } catch (error) {
-          console.error("Error preprocessing image:", error);
-          return imageElement.src; // Return original if preprocessing fails
-        }
-      }
-
-
-      // --- INTELLIGENT OCR AND LAYOUT ANALYSIS ---
-      async function extractTextWithLayout(imageUrl) {
-        try {
-          // Preprocess the image for better OCR
-          const img = new Image();
-          img.src = imageUrl;
-          await new Promise(resolve => img.onload = resolve);
-          
-          const preprocessedUrl = await preprocessImageForOCR(img);
-          
-          // Perform OCR with enhanced configuration
-          const { data: { text, words, lines } } = await Tesseract.recognize(
-            preprocessedUrl, 
-            'eng',
-            {
-              logger: m => console.log(m)
-            }
-          );
-          
-          // Analyze layout structure
-          const layout = {
-            headings: [],
-            paragraphs: [],
-            bulletPoints: [],
-            tables: []
-          };
-          
-          // Simple layout analysis (can be enhanced)
-          lines.forEach(line => {
-            const lineText = line.text.trim();
-            if (lineText.length > 0) {
-              // Check if it's a heading (shorter, often at the beginning)
-              if (lineText.length < 50 && lineText === lineText.toUpperCase()) {
-                layout.headings.push(lineText);
-              } 
-              // Check if it's a bullet point
-              else if (lineText.match(/^[-*•]\s+/)) {
-                layout.bulletPoints.push(lineText);
-              } 
-              // Otherwise treat as paragraph
-              else {
-                layout.paragraphs.push(lineText);
-              }
-            }
-          });
-          
-          return {
-            text,
-            layout,
-            words,
-            lines
-          };
-        } catch (error) {
-          console.error("Error in OCR and layout analysis:", error);
-          return { text: "", layout: { headings: [], paragraphs: [], bulletPoints: [], tables: [] } };
-        }
-      }
-
-
-      // --- DIAGRAMMATIC/FLOWCHART RECOGNITION ---
-      async function analyzeDiagram(imageUrl) {
-        try {
-          const captioner = await loadModel('captioner');
-          if (!captioner) return "Could not load image analysis model.";
-          
-          // Get a general description of the image
-          const result = await captioner(imageUrl);
-          const description = result[0].generated_text;
-          
-          // Check if it might be a diagram/flowchart based on keywords
-          const diagramKeywords = ['diagram', 'flowchart', 'chart', 'graph', 'map', 'plan', 'process'];
-          const isDiagram = diagramKeywords.some(keyword => 
-            description.toLowerCase().includes(keyword)
-          );
-          
-          if (isDiagram) {
-            // Try to extract more structured information
-            const detector = await loadModel('detector');
-            if (detector) {
-              const detectionResult = await detector(imageUrl);
-              
-              // Look for common diagram elements
-              const elements = detectionResult.map(d => d.label);
-              const hasNodes = elements.some(e => ['circle', 'rectangle', 'box'].includes(e.toLowerCase()));
-              const hasArrows = elements.some(e => ['arrow', 'line'].includes(e.toLowerCase()));
-              
-              if (hasNodes && hasArrows) {
-                return `This appears to be a diagram or flowchart. ${description} The diagram contains nodes and connecting elements, suggesting a process or relationship structure.`;
-              }
-            }
-          }
-          
-          return description;
-        } catch (error) {
-          console.error("Error analyzing diagram:", error);
-          return "I had trouble analyzing this image.";
-        }
-      }
-
-
-      // --- AGGRESSIVE UPFRONT PROCESSING ---
-      async function processUploadedContent(imageUrl) {
-        showLoading();
-        
-        try {
-          // Store the image in our stateless data structure
-          const imageId = `img_${Date.now()}`;
-          noteContent.images.push({
-            id: imageId,
-            url: imageUrl
-          });
-          
-          // Run all heavy tasks asynchronously in parallel
-          const [ocrResult, diagramAnalysis, captionResult] = await Promise.all([
-            extractTextWithLayout(imageUrl),
-            analyzeDiagram(imageUrl),
-            (async () => {
-              const captioner = await loadModel('captioner');
-              return captioner ? await captioner(imageUrl) : null;
-            })()
-          ]);
-          
-          // Store extracted text
-          if (ocrResult.text.trim()) {
-            noteContent.extractedText.push({
-              imageId,
-              text: ocrResult.text,
-              layout: ocrResult.layout
-            });
-            
-            // Display extracted text to user
-            addMessage(`Extracted Text:\n${ocrResult.text}`, "note", "ocr-result");
-          }
-          
-          // Store multimodal description
-          const multimodalDesc = {
-            imageId,
-            description: diagramAnalysis,
-            caption: captionResult ? captionResult[0].generated_text : null
-          };
-          noteContent.multimodalDescriptions.push(multimodalDesc);
-          
-          // Generate summary and action items
-          const generator = await loadModel('generator');
-          if (generator && ocrResult.text.trim()) {
-            try {
-              // Generate summary
-              const summaryPrompt = `Summarize the following text in a concise way: "${ocrResult.text}"`;
-              const summaryResult = await generator(summaryPrompt, { max_new_tokens: 100 });
-              const summary = summaryResult[0].generated_text;
-              
-              noteContent.summaries.push({
-                imageId,
-                text: summary
-              });
-              
-              // Extract action items
-              const actionPrompt = `Extract any action items, tasks, or to-do items from the following text. If none, respond with "No action items found.": "${ocrResult.text}"`;
-              const actionResult = await generator(actionPrompt, { max_new_tokens: 100 });
-              const actionItems = actionResult[0].generated_text;
-              
-              if (actionItems && !actionItems.includes("No action items found")) {
-                noteContent.actionItems.push({
-                  imageId,
-                  items: actionItems
-                });
-                
-                addMessage(`Action Items:\n${actionItems}`, "note", "assistant-highlight");
-              }
-            } catch (error) {
-              console.error("Error generating summary or action items:", error);
-            }
-          }
-          
-          // Display the multimodal description
-          addMessage(`Image Analysis:\n${diagramAnalysis}`, "note");
-          
-          hideLoading();
-        } catch (error) {
-          console.error("Error in aggressive upfront processing:", error);
-          hideLoading();
-          addMessage("I had trouble processing this image. Please try again.", "note");
-        }
-      }
-
-
-      // --- INTENT CLASSIFICATION & TOOL ROUTING ---
-      function classifyIntent(query) {
-        const lowerQuery = query.toLowerCase();
-        
-        // Check for math intent
-        if (lowerQuery.includes('calculate') || lowerQuery.includes('solve') || 
-            lowerQuery.includes('math') || lowerQuery.match(/\d+[\+\-\*\/]\d+/)) {
-          return 'math';
-        }
-        
-        // Check for research intent
-        if (lowerQuery.includes('what') || lowerQuery.includes('who') || 
-            lowerQuery.includes('when') || lowerQuery.includes('where') || 
-            lowerQuery.includes('why') || lowerQuery.includes('how') ||
-            lowerQuery.includes('tell me about') || lowerQuery.includes('find')) {
-          return 'research';
-        }
-        
-        // Check for summary intent
-        if (lowerQuery.includes('summarize') || lowerQuery.includes('summary') ||
-            lowerQuery.includes('overview') || lowerQuery.includes('main points')) {
-          return 'summary';
-        }
-        
-        // Default to general conversation
-        return 'general';
-      }
-
-
-      // --- COMPLEX CALCULATION ENGINE ---
-      async function handleComplexCalculation(query) {
-        try {
-          // Extract numerical data from notes
-          let numericalData = [];
-          
-          // Extract numbers from text content
-          const textNumbers = noteContent.text.match(/\d+(\.\d+)?/g) || [];
-          numericalData = numericalData.concat(textNumbers.map(Number));
-          
-          // Extract numbers from extracted text
-          noteContent.extractedText.forEach(item => {
-            const extractedNumbers = item.text.match(/\d+(\.\d+)?/g) || [];
-            numericalData = numericalData.concat(extractedNumbers.map(Number));
-          });
-          
-          // Try to evaluate the expression directly
-          try {
-            const result = math.evaluate(query);
-            return `Calculation result: ${result}`;
-          } catch (e) {
-            // If direct evaluation fails, try to extract and calculate
-            const expression = query.match(/[\d\+\-\*\/\(\)\.]+/g);
-            if (expression && expression.length > 0) {
-              const result = math.evaluate(expression.join(''));
-              return `Calculation result: ${result}`;
-            }
-            
-            return "I couldn't find a valid mathematical expression to calculate.";
-          }
-        } catch (error) {
-          console.error("Error in complex calculation:", error);
-          return "I had trouble performing this calculation.";
-        }
-      }
-
-
-      // --- FACT AND DETAIL RETRIEVAL (SEMANTIC SEARCH) ---
-      async function retrieveRelevantContent(query) {
-        // Simple keyword-based search (can be enhanced with vector embeddings)
-        const queryWords = query.toLowerCase().split(/\s+/).filter(word => word.length > 2);
-        
-        let relevantContent = {
-          text: [],
-          extractedText: [],
-          summaries: [],
-          multimodalDescriptions: []
-        };
-        
-        // Search in text content
-        if (noteContent.text) {
-          const textLower = noteContent.text.toLowerCase();
-          if (queryWords.some(word => textLower.includes(word))) {
-            relevantContent.text.push(noteContent.text);
-          }
-        }
-        
-        // Search in extracted text
-        noteContent.extractedText.forEach(item => {
-          const textLower = item.text.toLowerCase();
-          if (queryWords.some(word => textLower.includes(word))) {
-            relevantContent.extractedText.push({
-              text: item.text,
-              imageId: item.imageId
-            });
-          }
-        });
-        
-        // Search in summaries
-        noteContent.summaries.forEach(item => {
-          const textLower = item.text.toLowerCase();
-          if (queryWords.some(word => textLower.includes(word))) {
-            relevantContent.summaries.push({
-              text: item.text,
-              imageId: item.imageId
-            });
-          }
-        });
-        
-        // Search in multimodal descriptions
-        noteContent.multimodalDescriptions.forEach(item => {
-          const textLower = item.description.toLowerCase();
-          if (queryWords.some(word => textLower.includes(word))) {
-            relevantContent.multimodalDescriptions.push({
-              description: item.description,
-              imageId: item.imageId
-            });
-          }
-        });
-        
-        return relevantContent;
-      }
-
-
-      // --- STREAMING RESPONSE DELIVERY ---
-      async function generateStreamingResponse(prompt, messageElement) {
-        try {
-          const generator = await loadModel('generator');
-          if (!generator) {
-            messageElement.appendText("I'm having trouble loading my AI model. Please try again later.");
-            return;
-          }
-          
-          // Generate response with streaming simulation
-          // Note: Transformers.js doesn't support true streaming yet, so we'll simulate it
-          const result = await generator(prompt, { max_new_tokens: 150 });
-          const responseText = result[0].generated_text;
-          
-          // Simulate streaming by adding characters one by one
-          let i = 0;
-          const streamInterval = setInterval(() => {
-            if (i < responseText.length) {
-              messageElement.appendText(responseText[i]);
-              i++;
-            } else {
-              clearInterval(streamInterval);
-            }
-          }, 10); // Adjust speed as needed
-          
-        } catch (error) {
-          console.error("Error generating streaming response:", error);
-          messageElement.appendText("I had trouble generating a response. Please try again.");
-        }
-      }
-
-
-      // --- COMPREHENSIVE PROMPT CONCATENATION ---
-      function buildComprehensivePrompt(userQuery) {
-        let prompt = systemPrompt + "\n\n";
-        
-        // Add note content
-        if (noteContent.text) {
-          prompt += `Note Content:\n${noteContent.text}\n\n`;
-        }
-        
-        // Add extracted text from images
-        if (noteContent.extractedText.length > 0) {
-          prompt += "Extracted Text from Images:\n";
-          noteContent.extractedText.forEach(item => {
-            prompt += `${item.text}\n`;
-          });
-          prompt += "\n";
-        }
-        
-        // Add summaries
-        if (noteContent.summaries.length > 0) {
-          prompt += "Summaries:\n";
-          noteContent.summaries.forEach(item => {
-            prompt += `${item.text}\n`;
-          });
-          prompt += "\n";
-        }
-        
-        // Add action items
-        if (noteContent.actionItems.length > 0) {
-          prompt += "Action Items:\n";
-          noteContent.actionItems.forEach(item => {
-            prompt += `${item.items}\n`;
-          });
-          prompt += "\n";
-        }
-        
-        // Add multimodal descriptions
-        if (noteContent.multimodalDescriptions.length > 0) {
-          prompt += "Image Descriptions:\n";
-          noteContent.multimodalDescriptions.forEach(item => {
-            prompt += `${item.description}\n`;
-          });
-          prompt += "\n";
-        }
-        
-        // Add conversation history
-        if (conversationHistory.length > 0) {
-          prompt += "Recent Conversation:\n";
-          conversationHistory.slice(-5).forEach(item => {
-            prompt += `${item.role}: ${item.content}\n`;
-          });
-          prompt += "\n";
-        }
-        
-        // Add the user's current query
-        prompt += `User Query: ${userQuery}\n\n`;
-        prompt += "Please provide a helpful response based on the available information:";
-        
-        return prompt;
-      }
-
-
-      // --- MAIN RESPONSE GENERATION FUNCTION ---
-      async function generateResponse(userMessage) {
-        const lowerText = userMessage.toLowerCase().trim();
-        
-        // --- FIX: Robust Math Expression Detection ---
-        // This block now correctly handles pure math expressions without the "math:" prefix.
-        try {
-            const result = math.evaluate(userMessage);
-            return `The result is: ${result}`;
-        } catch (error) {
-            // It's not a pure math expression, so we continue to the next logic.
-        }
-
-
-        if (lowerText.startsWith('math:')) {
-            return handleMath(userMessage.substring(5).trim());
-        } else if (lowerText.startsWith('wiki:')) {
-            return await handleWikipedia(userMessage.substring(5).trim());
-        } else if (lowerText.startsWith('chart:')) {
-            return handleChart(userMessage.substring(6).trim());
-        } else if (lowerText.startsWith('translate to french')) {
-            const translator = await loadModel('translator');
-            if (!translator) return "Translation model is not available.";
-            const textToTranslate = userMessage.substring('translate to french'.length).trim();
-            const result = await translator(textToTranslate);
-            return `French translation: ${result[0].translation_text}`;
-        } else if (isLiteMode) {
-            const wikiResult = await handleWikipedia(userMessage);
-            if (wikiResult.includes("couldn't find") || wikiResult.includes("trouble accessing")) {
-                return "I'm in Lite Mode and can't access the web. Please ask a simpler question or type 'retry generator'.";
-            }
-            return wikiResult;
-        } else {
-            // --- INTENT CLASSIFICATION & TOOL ROUTING ---
-            const intent = classifyIntent(userMessage);
-            
-            // Handle different intents
-            if (intent === 'math') {
-                return await handleComplexCalculation(userMessage);
-            } else if (intent === 'research') {
-                // --- FACT AND DETAIL RETRIEVAL ---
-                const relevantContent = await retrieveRelevantContent(userMessage);
-                
-                // Build a comprehensive prompt with relevant content
-                let prompt = systemPrompt + "\n\n";
-                
-                if (relevantContent.text.length > 0) {
-                    prompt += `From your notes:\n${relevantContent.text.join('\n')}\n\n`;
-                }
-                
-                if (relevantContent.extractedText.length > 0) {
-                    prompt += `From extracted text:\n`;
-                    relevantContent.extractedText.forEach(item => {
-                        prompt += `${item.text}\n`;
-                    });
-                    prompt += "\n";
-                }
-                
-                if (relevantContent.summaries.length > 0) {
-                    prompt += `From summaries:\n`;
-                    relevantContent.summaries.forEach(item => {
-                        prompt += `${item.text}\n`;
-                    });
-                    prompt += "\n";
-                }
-                
-                prompt += `Question: ${userMessage}\n\n`;
-                prompt += "Please provide a helpful response based on the available information, citing sources when relevant:";
-                
-                // Generate streaming response
-                const messageElement = addStreamingMessage("", "note");
-                generateStreamingResponse(prompt, messageElement);
-                return null; // Return null since we're handling the response through streaming
-            } else if (intent === 'summary') {
-                // Generate a summary of all content
-                let allContent = noteContent.text || "";
-                
-                noteContent.extractedText.forEach(item => {
-                    allContent += "\n" + item.text;
-                });
-                
-                if (allContent.trim()) {
-                    const generator = await loadModel('generator');
-                    if (!generator) return "I need the AI model to create a summary, but it's not available.";
-                    
-                    const prompt = `Summarize the following content:\n${allContent}`;
-                    const result = await generator(prompt, { max_new_tokens: 150 });
-                    return `Summary: ${result[0].generated_text}`;
-                } else {
-                    return "There's no content to summarize yet. Please add some text or upload an image.";
-                }
-            } else {
-                // Default: general conversation with comprehensive prompt
-                const prompt = buildComprehensivePrompt(userMessage);
-                
-                // Generate streaming response
-                const messageElement = addStreamingMessage("", "note");
-                generateStreamingResponse(prompt, messageElement);
-                return null; // Return null since we're handling the response through streaming
-            }
-        }
-      }
-
-
-      // --- EVENT LISTENERS ---
-      sendBtn.addEventListener("click", async () => {
-        const message = userInput.value.trim();
-        if (!message) return;
-        
-        addMessage(message, "user");
-        updateConversationHistory("user", message);
-        userInput.value = "";
-        
-        let response = "I had trouble processing that.";
-        const lowerText = message.toLowerCase();
-
-
-        if (lowerText === 'help') {
-            response = `Available commands:
-            - "math: 2+2" for calculations.
-            - "wiki: Einstein" for Wikipedia summaries.
-            - "chart: A:10, B:20" to create a chart.
-            - "translate to french hello" for translation.
-            - Upload an image for analysis (OCR, captioning, objects).
-            - "status" to check model status.
-            - "free memory" to unload models.
-            - "retry <model_name>" to reload a failed model.
-            - "summarize" to get a summary of all content.
-            - Ask questions about your uploaded content for research.`;
-        } else if (lowerText === 'status') {
-            response = `Model Status:\n${Object.entries(modelStatus).map(([name, status]) => `- ${name}: ${status}`).join('\n')}`;
-        } else if (lowerText === 'free memory') {
-            for (const modelName in models) {
-                delete models[modelName];
-                modelStatus[modelName] = 'idle';
-            }
-            // Clear all content from RAM
-            noteContent = {
-                text: "",
-                images: [],
-                extractedText: [],
-                summaries: [],
-                actionItems: [],
-                multimodalDescriptions: []
-            };
-            response = "All models and content have been unloaded from memory.";
-        } else if (lowerText.startsWith('retry ')) {
-            const modelName = lowerText.split(' ')[1];
-            if (modelStatus.hasOwnProperty(modelName) && modelConfigs.hasOwnProperty(modelName)) {
-                await loadModel(modelName, true);
-                response = `Retrying ${modelName} model...`;
-            } else {
-                response = `Unknown model: ${modelName}. Available models to retry: ${Object.keys(modelConfigs).join(', ')}.`;
-            }
-        } else {
-            response = await generateResponse(message);
-        }
-        
-        // Only add the response if it's not null (null means we're handling streaming)
-        if (response !== null) {
-            addMessage(response, "note");
-            updateConversationHistory("assistant", response);
-        }
-      });
-
-
-      fileInput.addEventListener('change', async (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            const imageUrl = e.target.result;
-            addImageMessage(imageUrl, "user");
-            
-            // Process the image with aggressive upfront processing
-            await processUploadedContent(imageUrl);
-            
-            fileInput.value = '';
-        };
-        reader.readAsDataURL(file);
-      });
-
-
-      uploadBtn.addEventListener('click', () => fileInput.click());
-      
-      userInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          sendBtn.click();
-        }
-      });
-
-
-      function addImageMessage(url, sender) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message', sender);
-        const img = document.createElement('img');
-        img.src = url;
-        img.classList.add('message-image');
-        messageDiv.appendChild(img);
-        chatDiv.appendChild(messageDiv);
-        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
-      }
-
-
-      chatContainer.addEventListener('scroll', () => {
-        const isAtBottom = chatContainer.scrollHeight - chatContainer.scrollTop <= chatContainer.clientHeight + 50;
-        scrollToBottomBtn.classList.toggle('hidden', isAtBottom);
-      });
-
-
-      scrollToBottomBtn.addEventListener('click', () => {
-        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
-      });
-
-
-      modeToggleBtn.addEventListener('click', () => {
-        isEducationalMode = !isEducationalMode;
-        const icon = modeToggleBtn.querySelector('i');
-        icon.classList.toggle('fa-brain', !isEducationalMode);
-        icon.classList.toggle('fa-graduation-cap', isEducationalMode);
-        modeToggleBtn.title = isEducationalMode ? 'Switch to Casual Mode' : 'Switch to Educational Mode';
-        addMessage(isEducationalMode ? "Educational Mode enabled." : "Casual Mode enabled.", "note");
-      });
-    });
-  </script>
-
-
+</head>
+<body>
+
+  <!-- Simple Moon and Stars Background -->
+  <div class="cosmos">
+    <div class="moon"></div>
+    <div class="stars"></div>
+  </div>
+
+  <div class="app-container">
+    <!-- Main Chat Area -->
+    <main class="main-content">
+      <header class="main-header">
+        <h1 class="conversation-title">
+          NOTE
+          <span class="title-credit">by hafij shaikh</span>
+        </h1>
+        <div class="header-actions">
+            <button class="action-btn scroll-to-bottom-btn" id="scrollToBottomBtn" title="Scroll to Bottom">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <button class="action-btn mode-toggle-btn" id="modeToggleBtn" title="Toggle Conversation Mode">
+                <i class="fas fa-brain"></i>
+            </button>
+        </div>
+      </header>
+
+      <div class="chat-container" id="chat-container">
+        <div id="chat">
+          <!-- No initial messages -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Fixed Input Area -->
+  <footer class="chat-input-container">
+    <button class="attachment-btn" id="uploadBtn"><i class="fas fa-paperclip"></i></button>
+    <input type="file" id="fileInput" accept="image/*" style="display:none">
+    <input type="text" id="userInput" placeholder="Type a message...">
+    <button class="send-btn" id="sendBtn">Send</button>
+  </footer>
+
+  <!-- Page Watermark -->
+  <div class="page-watermark">note.infinity-Ⅰ</div>
+
+  <!-- Link to the main JavaScript file -->
+  <script src="main.js" defer></script>
 </body>
 </html>
