@@ -6,25 +6,19 @@
   <title>NOTE - Cosmic Midnight</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   
-  <!-- Confirm Correct Script Imports -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.9.0/math.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-  <!-- The main application logic is now in a separate module file -->
   <script type="module" src="main.js"></script>
 </head>
 <body>
 
-  <!-- Main App Container -->
   <div class="app-container">
-    <!-- Simple Moon and Stars Background -->
     <div class="cosmos">
       <div class="moon"></div>
       <div class="stars"></div>
     </div>
 
-    <!-- Main Chat Area -->
     <main class="main-content">
       <header class="main-header">
         <h1 class="conversation-title">
@@ -34,13 +28,10 @@
       </header>
 
       <div class="chat-container" id="chat-container">
-        <div id="chat">
-          <!-- Chat starts empty -->
-        </div>
+        <div id="chat"></div>
       </div>
     </main>
 
-    <!-- --- FIX: Moved footer inside app-container and removed fixed positioning --- -->
     <footer class="chat-input-container">
       <button class="attachment-btn" id="uploadBtn"><i class="fas fa-paperclip"></i></button>
       <input type="file" id="fileInput" accept="image/*" style="display:none">
@@ -49,7 +40,6 @@
     </footer>
   </div>
 
-  <!-- New Action Buttons -->
   <button class="action-btn scroll-to-bottom-btn" id="scrollToBottomBtn" title="Scroll to Bottom">
     <i class="fas fa-chevron-down"></i>
   </button>
@@ -57,10 +47,13 @@
     <i class="fas fa-brain"></i>
   </button>
 
-  <!-- Page Watermark -->
   <div class="page-watermark">note.infinity-Ⅰ</div>
 
   <style>
+    /* --- FIX: Ensure full height layout --- */
+    html, body { margin: 0; padding: 0; height: 100%; min-height: 100%; }
+    * { box-sizing: border-box; }
+
     /* --- Cosmic Midnight Color Palette --- */
     :root {
       --bg-gradient-start: #0a0e1a;
@@ -76,31 +69,17 @@
       --glow-color: rgba(224, 230, 241, 0.3);
     }
 
-    html, body { margin: 0; padding: 0; height: 100%; min-height: 100%; }
-    * { box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: var(--bg-gradient-start); color: var(--text-primary); overflow: hidden; position: relative;
     }
 
-    /* --- Simple Moon and Stars Background --- */
-    .cosmos { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
-    .moon {
-      position: absolute; top: 15%; right: 20%; width: 250px; height: 250px;
-      background: radial-gradient(circle, rgba(224, 230, 241, 0.2) 0%, rgba(224, 230, 241, 0.05) 60%, transparent 100%);
-      border-radius: 50%; filter: blur(2px); box-shadow: 0 0 50px var(--glow-color);
-    }
-    .stars {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background-image: radial-gradient(1px 1px at 50px 100px, #fff, transparent), radial-gradient(1px 1px at 150px 250px, #fff, transparent);
-      background-repeat: repeat; background-size: 600px 400px; opacity: 0.5; animation: twinkle 10s infinite ease-in-out;
-    }
-    @keyframes twinkle { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.8; } }
-
+    /* --- FIX: Corrected App Container Layout --- */
     .app-container { 
       display: flex; 
       flex-direction: column; 
-      height: 100vh; 
+      /* Use min-height instead of height to be more robust */
+      min-height: 100vh; 
       position: relative; 
       z-index: 1; 
     }
@@ -114,12 +93,10 @@
     .conversation-title { font-size: 1.5rem; font-weight: 600; display: flex; align-items: baseline; gap: 8px; color: var(--accent); text-shadow: 0 0 10px var(--glow-color); }
     .title-credit { font-size: 0.7rem; color: var(--text-muted); font-weight: 400; text-shadow: none; }
 
-    /* --- FIX: Corrected Chat Container --- */
     .chat-container { 
       flex-grow: 1; 
       overflow-y: auto; 
       padding: 20px; 
-      /* padding-bottom removed */
       background: transparent; 
       scrollbar-width: none; 
       -ms-overflow-style: none; 
@@ -127,13 +104,11 @@
     .chat-container::-webkit-scrollbar { display: none; }
     #chat { display: flex; flex-direction: column; gap: 15px; }
 
-    /* --- FIX: Corrected Input Area --- */
     .chat-input-container {
       display: flex; align-items: center; gap: 10px; padding: 20px;
       background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
       border-top: 1px solid var(--glass-border);
-      /* position, bottom, left, right, z-index removed */
-      flex-shrink: 0; /* Prevents footer from shrinking */
+      flex-shrink: 0;
     }
     .attachment-btn, .send-btn {
       padding: 12px 18px; border-radius: 24px; border: none;
@@ -156,14 +131,22 @@
     #userInput:focus { border-color: var(--accent); background: rgba(255, 255, 255, 0.08); }
     #userInput::placeholder { color: var(--text-muted); }
 
-    /* --- Messages --- */
-    .message { 
-      display: flex; 
-      flex-direction: column; 
-      max-width: 70%; 
-      transition: transform 0.2s ease-out;
-      position: relative;
+    /* --- Cosmos Background --- */
+    .cosmos { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+    .moon {
+      position: absolute; top: 15%; right: 20%; width: 250px; height: 250px;
+      background: radial-gradient(circle, rgba(224, 230, 241, 0.2) 0%, rgba(224, 230, 241, 0.05) 60%, transparent 100%);
+      border-radius: 50%; filter: blur(2px); box-shadow: 0 0 50px var(--glow-color);
     }
+    .stars {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background-image: radial-gradient(1px 1px at 50px 100px, #fff, transparent), radial-gradient(1px 1px at 150px 250px, #fff, transparent);
+      background-repeat: repeat; background-size: 600px 400px; opacity: 0.5; animation: twinkle 10s infinite ease-in-out;
+    }
+    @keyframes twinkle { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.8; } }
+
+    /* --- Messages --- */
+    .message { display: flex; flex-direction: column; max-width: 70%; transition: transform 0.2s ease-out; position: relative; }
     .message.note { align-self: flex-start; }
     .message.user { align-self: flex-end; }
     .message-bubble {
@@ -178,88 +161,24 @@
       background: var(--accent); color: var(--bg-gradient-start); font-weight: 500;
       border-bottom-right-radius: 6px; box-shadow: 0 4px 15px var(--glow-color);
     }
-    .timestamp { 
-      font-size: 0.75rem; 
-      color: var(--text-muted); 
-      margin-top: 5px; 
-      display: flex; 
-      align-items: center; 
-      gap: 8px;
-    }
+    .timestamp { font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; display: flex; align-items: center; gap: 8px; }
     .message.note .timestamp { justify-content: flex-start; }
     .message.user .timestamp { justify-content: flex-end; }
-    
-    /* --- Image Message --- */
-    .message-image {
-      border-radius: 20px;
-      max-width: 100%;
-      height: auto;
-      display: block;
-      border: 1px solid var(--glass-border);
-      box-shadow: 0 0 15px var(--glow-color), 0 4px 15px var(--shadow-color);
-      border-bottom-right-radius: 6px;
-    }
-    
-    /* --- Chart Canvas --- */
-    .message-bubble canvas {
-      max-width: 100%;
-      height: auto !important;
-      border-radius: 10px;
-      margin-top: 10px;
-    }
-
-    /* --- Highlight for Important Assistant Messages --- */
-    .message.note.assistant-highlight {
-      border: 1px solid var(--accent);
-      box-shadow: 0 0 10px var(--glow-color);
-      padding: 2px;
-      border-radius: 22px;
-      background: rgba(224, 230, 241, 0.05);
-    }
+    .message-image { border-radius: 20px; max-width: 100%; height: auto; display: block; border: 1px solid var(--glass-border); box-shadow: 0 0 15px var(--glow-color), 0 4px 15px var(--shadow-color); border-bottom-right-radius: 6px; }
+    .message-bubble canvas { max-width: 100%; height: auto !important; border-radius: 10px; margin-top: 10px; }
+    .message.note.assistant-highlight { border: 1px solid var(--accent); box-shadow: 0 0 10px var(--glow-color); padding: 2px; border-radius: 22px; background: rgba(224, 230, 241, 0.05); }
     .message.note.assistant-highlight .message-bubble { border-bottom-left-radius: 6px; }
-    
-    /* --- OCR Result Message --- */
-    .message.note.ocr-result .message-bubble {
-        background: rgba(255, 235, 59, 0.1);
-        border-left: 3px solid rgba(255, 235, 59, 0.5);
-        font-family: 'Courier New', Courier, monospace;
-        white-space: pre-wrap;
-    }
-    
-    /* --- Math Solution Message --- */
-    .message.note.math-solution .message-bubble {
-        background: rgba(100, 200, 255, 0.1);
-        border-left: 3px solid rgba(100, 200, 255, 0.5);
-        font-family: 'Courier New', Courier, monospace;
-        white-space: pre-wrap;
-    }
+    .message.note.ocr-result .message-bubble { background: rgba(255, 235, 59, 0.1); border-left: 3px solid rgba(255, 235, 59, 0.5); font-family: 'Courier New', Courier, monospace; white-space: pre-wrap; }
+    .message.note.math-solution .message-bubble { background: rgba(100, 200, 255, 0.1); border-left: 3px solid rgba(100, 200, 255, 0.5); font-family: 'Courier New', Courier, monospace; white-space: pre-wrap; }
 
-    /* --- Infinity Loading Animation (for in-chat) --- */
-    .loading-indicator {
-      display: flex; align-items: center; gap: 10px; padding: 15px 20px;
-      background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      border: 1px solid var(--glass-border); border-radius: 20px; border-bottom-left-radius: 6px;
-      box-shadow: 0 4px 15px var(--shadow-color); max-width: 70%; align-self: flex-start;
-    }
-    .loading-indicator .infinity-loader { 
-      width: 50px; height: 25px; 
-      animation: spin 3s linear infinite; 
-    }
-    .loading-indicator .infinity-loader path {
-      stroke: var(--accent); stroke-width: 2.5; fill: none; stroke-linecap: round;
-      filter: drop-shadow(0 0 5px var(--glow-color)); 
-      animation: pulse-glow 2s ease-in-out infinite;
-    }
-    @keyframes spin { 
-      from { transform: rotate(0deg); } 
-      to { transform: rotate(360deg); } 
-    }
-    @keyframes pulse-glow { 
-      0%, 100% { opacity: 0.8; } 
-      50% { opacity: 1; } 
-    }
+    /* --- Loading --- */
+    .loading-indicator { display: flex; align-items: center; gap: 10px; padding: 15px 20px; background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 20px; border-bottom-left-radius: 6px; box-shadow: 0 4px 15px var(--shadow-color); max-width: 70%; align-self: flex-start; }
+    .loading-indicator .infinity-loader { width: 50px; height: 25px; animation: spin 3s linear infinite; }
+    .loading-indicator .infinity-loader path { stroke: var(--accent); stroke-width: 2.5; fill: none; stroke-linecap: round; filter: drop-shadow(0 0 5px var(--glow-color)); animation: pulse-glow 2s ease-in-out infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes pulse-glow { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; } }
 
-    /* --- New Action Buttons --- */
+    /* --- Action Buttons --- */
     .action-btn {
       position: fixed; bottom: 100px; width: 48px; height: 48px; border-radius: 50%;
       background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -267,20 +186,12 @@
       cursor: pointer; display: flex; align-items: center; justify-content: center;
       transition: all 0.2s ease; box-shadow: 0 4px 15px var(--shadow-color); z-index: 15;
     }
-    .action-btn:hover {
-      background: rgba(255, 255, 255, 0.1); color: var(--accent-hover);
-      box-shadow: 0 0 15px var(--glow-color); transform: scale(1.05);
-    }
+    .action-btn:hover { background: rgba(255, 255, 255, 0.1); color: var(--accent-hover); box-shadow: 0 0 15px var(--glow-color); transform: scale(1.05); }
     .action-btn:active { transform: scale(0.95); }
     .scroll-to-bottom-btn { right: 20px; }
     .mode-toggle-btn { right: 80px; }
     .scroll-to-bottom-btn.hidden { opacity: 0; pointer-events: none; transform: scale(0.8); }
-
-    .page-watermark {
-      position: fixed; bottom: 5px; right: 5px; font-size: 0.6rem;
-      color: var(--text-muted); font-family: 'Courier New', Courier, monospace;
-      opacity: 0.7; pointer-events: none; z-index: 21;
-    }
+    .page-watermark { position: fixed; bottom: 5px; right: 5px; font-size: 0.6rem; color: var(--text-muted); font-family: 'Courier New', Courier, monospace; opacity: 0.7; pointer-events: none; z-index: 21; }
   </style>
 </body>
 </html>
