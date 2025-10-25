@@ -1,4 +1,3 @@
-// (The main.js file from the previous response goes here)
 // Import the pipeline function from transformers.js
 import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@latest';
 
@@ -84,11 +83,12 @@ document.addEventListener("DOMContentLoaded", function() {
     return messageDiv;
   }
   
-  // --- CORE FEATURE FUNCTIONS ---
+  // --- CORE FEATURE FUNCTIONS (FIXED AND COMPLETE) ---
   function handleMath(expression) {
     try { const result = math.evaluate(expression); return `The result is: ${result}`; } 
     catch (error) { return 'Invalid mathematical expression. Please check your syntax.'; }
   }
+
   function handleChart(dataString) {
     const dataPairs = dataString.split(',');
     const labels = []; const data = [];
@@ -99,6 +99,7 @@ document.addEventListener("DOMContentLoaded", function() {
     new Chart(canvas, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Data', data: data, backgroundColor: 'rgba(224, 230, 241, 0.5)', borderColor: 'rgba(224, 230, 241, 1)', borderWidth: 1 }] }, options: { responsive: true, plugins: { legend: { display: false }, title: { display: true, text: 'Custom Chart', color: '#b8c5d6' } }, scales: { y: { beginAtZero: true, ticks: { color: '#a0b0c5' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#a0b0c5' }, grid: { color: 'rgba(255,255,255,0.1)' } } } });
     return null;
   }
+
   async function handleWikipedia(query) {
     try { const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`; const summaryResponse = await fetch(summaryUrl); if (summaryResponse.ok) { const data = await summaryResponse.json(); return data.extract || "I found a page, but it doesn't have a summary."; } else { return `Sorry, I couldn't find a Wikipedia article for "${query}".`; } }
     catch (error) { console.error("Wikipedia error:", error); return `Sorry, I had trouble accessing Wikipedia. Please try again later.`; }
@@ -107,49 +108,25 @@ document.addEventListener("DOMContentLoaded", function() {
   // --- SIMPLIFIED AND ROBUST CENTRAL BRAIN ---
   async function mainController(userMessage, imageUrl = null) {
     let promptText = userMessage;
-
-    // 1. Handle image input with a clear, structured prompt
     if (imageUrl) {
       const captioner = await loadModel('captioner');
       if (!captioner) return "Image model not available.";
-      
       const ocr = await Tesseract.recognize(imageUrl, 'eng');
       const ocrText = ocr.data.text.trim();
       const blipOut = await captioner(imageUrl);
       const caption = blipOut[0].generated_text;
-      
       promptText = `Image Caption: "${caption}". Extracted Text: "${ocrText}". Based on the image, ${userMessage}`;
     }
-    
-    // 2. Handle simple greetings for a better conversational feel
     const lowerMessage = userMessage.toLowerCase().trim();
-    if (!isEducationalMode && (lowerMessage === 'hi' || lowerMessage === 'hello')) {
-        return lowerMessage === 'hi' ? 'Hey there!' : 'Hello to you too!';
-    }
-    if (lowerMessage === 'how are you') {
-        return "I'm doing great, thanks for asking! How can I help you?";
-    }
-
-    // 3. Try to solve math directly from any text
-    try {
-        if (/[0-9+\-*/()]/.test(promptText)) {
-            const result = math.evaluate(promptText);
-            if (result !== undefined) return `📐 The answer is: ${result}`;
-        }
-    } catch (e) { /* Not a math expression, continue */ }
-
-    // 4. Create a simple, direct prompt for the AI
+    if (!isEducationalMode && (lowerMessage === 'hi' || lowerMessage === 'hello')) { return lowerMessage === 'hi' ? 'Hey there!' : 'Hello to you too!'; }
+    if (lowerMessage === 'how are you') { return "I'm doing great, thanks for asking! How can I help you?"; }
+    try { if (/[0-9+\-*/()]/.test(promptText)) { const result = math.evaluate(promptText); if (result !== undefined) return `📐 The answer is: ${result}`; } } catch (e) { /* Not a math expression, continue */ }
     const persona = isEducationalMode ? 'a helpful expert' : 'a friendly assistant';
     const prompt = `As ${persona}, answer this question directly: ${promptText}`;
-
-    // 5. Generate answer
     const generator = await loadModel('generator');
     if (!generator) return "Main reasoning model not available.";
-    
     const t5Out = await generator(prompt, { max_new_tokens: 100 });
     let answer = t5Out[0].generated_text.trim();
-
-    // 6. Add a visual aid if it's educational mode
     if (isEducationalMode) {
       const words = answer.split(" ");
       for (const word of words) {
@@ -173,44 +150,55 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       }
     }
-    
     return answer;
   }
   
-  // --- EVENT LISTENERS ---
+  // --- EVENT LISTENERS (WRAPPED IN TRY/CATCH) ---
   sendBtn.addEventListener("click", async () => {
-    const message = userInput.value.trim();
-    if (!message) return;
-    addMessage(message, "user");
-    userInput.value = "";
-    showLoading();
-    
-    let response = "I had trouble processing that.";
-    const lowerText = message.toLowerCase();
+    try {
+      const message = userInput.value.trim();
+      if (!message) return;
+      addMessage(message, "user");
+      userInput.value = "";
+      showLoading();
+      
+      let response = "I had trouble processing that.";
+      const lowerText = message.toLowerCase();
 
-    if (lowerText === 'help') { response = `Available commands: "math: 2+2", "wiki: Einstein", "chart: A:10, B:20", "translate to french hello", upload an image, "status", "free memory", "retry <model_name>".`; }
-    else if (lowerText === 'status') { response = `Model Status:\n${Object.keys(modelConfigs).map(name => `- ${name}: ${models[name] ? 'ready' : 'idle'}`).join('\n')}`; }
-    else if (lowerText === 'free memory') { for (const modelName in models) delete models[modelName]; response = "All models have been unloaded from memory."; }
-    else if (lowerText.startsWith('retry ')) { const modelName = lowerText.split(' ')[1]; if (modelConfigs.hasOwnProperty(modelName)) { delete models[modelName]; await loadModel(modelName); response = `Retrying ${modelName} model...`; } else { response = `Unknown model: ${modelName}.`; } }
-    else if (lowerText.startsWith('math:')) { response = handleMath(message.substring(5).trim()); }
-    else if (lowerText.startsWith('wiki:')) { response = await handleWikipedia(message.substring(5).trim()); }
-    else if (lowerText.startsWith('chart:')) { response = handleChart(message.substring(6).trim()); }
-    else if (lowerText.startsWith('translate to french')) { const translator = await loadModel('translator'); if (!translator) response = "Translation model is not available."; else { const textToTranslate = message.substring('translate to french'.length).trim(); const result = await translator(textToTranslate); response = `French translation: ${result[0].translation_text}`; } }
-    else { response = await mainController(message); }
-    
-    hideLoading();
-    addMessage(response, "note");
+      if (lowerText === 'help') { response = `Available commands: "math: 2+2", "wiki: Einstein", "chart: A:10, B:20", "translate to french hello", upload an image, "status", "free memory", "retry <model_name>".`; }
+      else if (lowerText === 'status') { response = `Model Status:\n${Object.keys(modelConfigs).map(name => `- ${name}: ${models[name] ? 'ready' : 'idle'}`).join('\n')}`; }
+      else if (lowerText === 'free memory') { for (const modelName in models) delete models[modelName]; response = "All models have been unloaded from memory."; }
+      else if (lowerText.startsWith('retry ')) { const modelName = lowerText.split(' ')[1]; if (modelConfigs.hasOwnProperty(modelName)) { delete models[modelName]; await loadModel(modelName); response = `Retrying ${modelName} model...`; } else { response = `Unknown model: ${modelName}.`; } }
+      else if (lowerText.startsWith('math:')) { response = handleMath(message.substring(5).trim()); }
+      else if (lowerText.startsWith('wiki:')) { response = await handleWikipedia(message.substring(5).trim()); }
+      else if (lowerText.startsWith('chart:')) { response = handleChart(message.substring(6).trim()); }
+      else if (lowerText.startsWith('translate to french')) { const translator = await loadModel('translator'); if (!translator) response = "Translation model is not available."; else { const textToTranslate = message.substring('translate to french'.length).trim(); const result = await translator(textToTranslate); response = `French translation: ${result[0].translation_text}`; } }
+      else { response = await mainController(message); }
+      
+      hideLoading();
+      addMessage(response, "note");
+    } catch (error) {
+      console.error("An error occurred in the send button listener:", error);
+      hideLoading();
+      addMessage("An unexpected error occurred. Please try again.", "note");
+    }
   });
 
   fileInput.addEventListener('change', async (event) => {
-    const file = event.target.files[0]; if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-        const imageUrl = e.target.result; addImageMessage(imageUrl, "user"); showLoading();
-        const response = await mainController("Analyze this image.", imageUrl);
-        hideLoading(); addMessage(response, "note"); fileInput.value = '';
-    };
-    reader.readAsDataURL(file);
+    try {
+      const file = event.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+          const imageUrl = e.target.result; addImageMessage(imageUrl, "user"); showLoading();
+          const response = await mainController("Analyze this image.", imageUrl);
+          hideLoading(); addMessage(response, "note"); fileInput.value = '';
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error("An error occurred during file upload:", error);
+      hideLoading();
+      addMessage("Failed to process the image.", "note");
+    }
   });
 
   uploadBtn.addEventListener('click', () => fileInput.click());
