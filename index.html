@@ -1,0 +1,991 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOTE - Cosmic Midnight</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+
+  <!-- Simple Moon and Stars Background -->
+  <div class="cosmos">
+    <div class="moon"></div>
+    <div class="stars"></div>
+  </div>
+
+  <div class="app-container">
+    <!-- Main Chat Area -->
+    <main class="main-content">
+      <header class="main-header">
+        <!-- Title on the Left -->
+        <h1 class="conversation-title">
+          NOTE
+          <span class="title-credit">by hafij shaikh</span>
+        </h1>
+
+        <!-- Header Controls Grouped on the Right -->
+        <div class="header-controls">
+          <button class="header-action-btn scroll-to-bottom-btn" id="scrollToBottomBtn" title="Scroll to Bottom">
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <button class="header-action-btn mode-toggle-btn" id="modeToggleBtn" title="Toggle Conversation Mode">
+            <i class="fas fa-brain"></i>
+          </button>
+        </div>
+      </header>
+
+      <div class="chat-container" id="chat-container">
+        <div id="chat">
+          <!-- No initial messages -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Fixed Input Area -->
+  <footer class="chat-input-container">
+    <button class="attachment-btn" id="uploadBtn"><i class="fas fa-paperclip"></i></button>
+    <input type="file" id="fileInput" accept="image/*" style="display:none">
+    <input type="text" id="userInput" placeholder="Type a message...">
+    <button class="send-btn" id="sendBtn">Send</button>
+  </footer>
+
+  <!-- Page Watermark -->
+  <div class="page-watermark">note.infinity-Ⅰ</div>
+
+  <!-- Include Transformers.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0/dist/transformers.min.js"></script>
+
+  <style>
+    /* --- Cosmic Midnight Color Palette --- */
+    :root {
+      --bg-gradient-start: #0a0e1a;
+      --bg-gradient-end: #050510;
+      --glass-bg: rgba(20, 25, 40, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --text-primary: #b8c5d6;
+      --text-secondary: #a0b0c5;
+      --text-muted: #7a8ca0;
+      --accent: #e0e6f1;
+      --accent-hover: #f0f4f8;
+      --shadow-color: rgba(0, 0, 0, 0.4);
+      --glow-color: rgba(224, 230, 241, 0.3);
+    }
+
+    html, body { margin: 0; padding: 0; height: 100%; min-height: 100%; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-gradient-start); color: var(--text-primary); overflow: hidden; position: relative;
+    }
+
+    /* --- Simple Moon and Stars Background --- */
+    .cosmos { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+    .moon {
+      position: absolute; top: 15%; right: 20%; width: 250px; height: 250px;
+      background: radial-gradient(circle, rgba(224, 230, 241, 0.2) 0%, rgba(224, 230, 241, 0.05) 60%, transparent 100%);
+      border-radius: 50%; filter: blur(2px); box-shadow: 0 0 50px var(--glow-color);
+    }
+    .stars {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background-image: radial-gradient(1px 1px at 50px 100px, #fff, transparent), radial-gradient(1px 1px at 150px 250px, #fff, transparent);
+      background-repeat: repeat; background-size: 600px 400px; opacity: 0.5; animation: twinkle 10s infinite ease-in-out;
+    }
+    @keyframes twinkle { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.8; } }
+
+    .app-container { display: flex; flex-direction: column; height: 100vh; position: relative; z-index: 1; }
+    .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .main-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 20px; 
+      flex-shrink: 0; 
+      background: transparent; 
+    }
+    .conversation-title { font-size: 1.5rem; font-weight: 600; display: flex; align-items: baseline; gap: 8px; color: var(--accent); text-shadow: 0 0 10px var(--glow-color); }
+    .title-credit { font-size: 0.7rem; color: var(--text-muted); font-weight: 400; text-shadow: none; }
+
+    .chat-container { flex-grow: 1; overflow-y: auto; padding: 20px; padding-bottom: 120px; background: transparent; scrollbar-width: none; -ms-overflow-style: none; }
+    .chat-container::-webkit-scrollbar { display: none; }
+    #chat { display: flex; flex-direction: column; gap: 15px; }
+
+    /* --- Messages --- */
+    .message { 
+      display: flex; 
+      flex-direction: column; 
+      max-width: 70%; 
+      transition: transform 0.2s ease-out;
+      position: relative;
+    }
+    .message.note { align-self: flex-start; }
+    .message.user { align-self: flex-end; }
+    .message-bubble {
+      padding: 12px 18px; border-radius: 20px; line-height: 1.5; word-wrap: break-word;
+      box-shadow: 0 4px 15px var(--shadow-color);
+    }
+    .message.note .message-bubble {
+      background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border); color: var(--text-primary); border-bottom-left-radius: 6px;
+    }
+    .message.user .message-bubble {
+      background: var(--accent); color: var(--bg-gradient-start); font-weight: 500;
+      border-bottom-right-radius: 6px; box-shadow: 0 4px 15px var(--glow-color);
+    }
+    .timestamp { 
+      font-size: 0.75rem; 
+      color: var(--text-muted); 
+      margin-top: 5px; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px;
+    }
+    .message.note .timestamp { justify-content: flex-start; }
+    .message.user .timestamp { justify-content: flex-end; }
+    
+    /* --- Image Message --- */
+    .message-image {
+      border-radius: 20px;
+      max-width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 0 15px var(--glow-color), 0 4px 15px var(--shadow-color);
+      border-bottom-right-radius: 6px;
+    }
+    
+    /* --- Wikipedia Result Message --- */
+    .message.note.wikipedia-result .message-bubble {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .wikipedia-result-image {
+        width: 100%;
+        max-height: 250px;
+        object-fit: cover;
+        border-radius: 12px;
+        align-self: center;
+    }
+    .wikipedia-result-text {
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* --- Highlight for Important Assistant Messages --- */
+    .message.note.assistant-highlight {
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 10px var(--glow-color);
+      padding: 2px;
+      border-radius: 22px;
+      background: rgba(224, 230, 241, 0.05);
+    }
+    .message.note.assistant-highlight .message-bubble { border-bottom-left-radius: 6px; }
+
+    /* --- Infinity Loading Animation --- */
+    .loading-indicator {
+      display: flex; align-items: center; gap: 10px; padding: 15px 20px;
+      background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border); border-radius: 20px; border-bottom-left-radius: 6px;
+      box-shadow: 0 4px 15px var(--shadow-color); max-width: 70%; align-self: flex-start;
+    }
+    .infinity-loader { 
+      width: 50px; height: 25px; 
+      animation: spin 3s linear infinite; 
+    }
+    .infinity-loader path {
+      stroke: var(--accent); stroke-width: 2.5; fill: none; stroke-linecap: round;
+      filter: drop-shadow(0 0 5px var(--glow-color)); 
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    @keyframes spin { 
+      from { transform: rotate(0deg); } 
+      to { transform: rotate(360deg); } 
+    }
+    @keyframes pulse-glow { 
+      0%, 100% { opacity: 0.8; } 
+      50% { opacity: 1; } 
+    }
+
+    /* --- Fixed Input Area --- */
+    .chat-input-container {
+      display: flex; align-items: center; gap: 10px; padding: 20px;
+      background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+      border-top: 1px solid var(--glass-border);
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
+      box-shadow: 0 -4px 20px var(--shadow-color); transform: translateZ(0);
+    }
+    .attachment-btn, .send-btn {
+      padding: 12px 18px; border-radius: 24px; border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: transform 0.1s, box-shadow 0.2s;
+      font-weight: 500; box-shadow: 0 2px 5px var(--shadow-color);
+    }
+    .attachment-btn { background: var(--glass-bg); color: var(--text-secondary); border: 1px solid var(--glass-border); }
+    .attachment-btn:hover { background: rgba(255, 255, 255, 0.05); color: var(--text-primary); }
+    .send-btn { background: var(--accent); color: var(--bg-gradient-start); box-shadow: 0 2px 10px var(--glow-color); }
+    .send-btn:hover { transform: scale(1.05); box-shadow: 0 4px 20px var(--glow-color); }
+    .send-btn:active { transform: scale(0.98); }
+    #userInput {
+      flex-grow: 1; padding: 12px 18px; border-radius: 24px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary); font-size: 1rem; outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    #userInput:focus { border-color: var(--accent); background: rgba(255, 255, 255, 0.08); }
+    #userInput::placeholder { color: var(--text-muted); }
+
+    /* --- Header Controls --- */
+    .header-controls {
+      display: flex;
+      gap: 12px;
+    }
+
+    .header-action-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    .header-action-btn:hover {
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .header-action-btn:active { transform: scale(0.95); }
+    .scroll-to-bottom-btn.hidden { opacity: 0; pointer-events: none; }
+
+    .page-watermark {
+      position: fixed; bottom: 5px; right: 5px; font-size: 0.6rem;
+      color: var(--text-muted); font-family: 'Courier New', Courier, monospace;
+      opacity: 0.7; pointer-events: none; z-index: 21;
+    }
+  </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async function() {
+      const chatContainer = document.getElementById("chat-container");
+      const chatDiv = document.getElementById("chat");
+      const userInput = document.getElementById("userInput");
+      const sendBtn = document.getElementById("sendBtn");
+      const uploadBtn = document.getElementById("uploadBtn");
+      const fileInput = document.getElementById("fileInput");
+      const scrollToBottomBtn = document.getElementById("scrollToBottomBtn");
+      const modeToggleBtn = document.getElementById("modeToggleBtn");
+
+      let isEducationalMode = false;
+      let conversationHistory = [];
+      let activeLoadingProcesses = 0;
+      let isLiteMode = false;
+      
+      let models = {};
+      let modelStatus = {
+        ocr: 'idle',
+        captioner: 'idle',
+        translator: 'idle',
+        generator: 'idle'
+      };
+
+      // --- LocalStorage for Model Status ---
+      const STORAGE_KEY = 'note_model_status';
+      function loadModelStatusFromStorage() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          try {
+            modelStatus = JSON.parse(stored);
+            // If a model was 'ready', it might not be in memory now, so set to 'idle' to allow re-loading from cache
+            for (const key in modelStatus) {
+              if (modelStatus[key] === 'ready') {
+                modelStatus[key] = 'idle';
+              }
+            }
+          } catch (e) {
+            console.error("Failed to load model status from storage:", e);
+          }
+        }
+      }
+      function saveModelStatusToStorage() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(modelStatus));
+      }
+
+      loadModelStatusFromStorage();
+
+      // --- Centralized model configuration --- 
+      const modelConfigs = {
+        ocr: { task: 'image-to-text', modelId: 'microsoft/trocr-base-handwritten', priority: 2 },
+        captioner: { task: 'image-to-text', modelId: 'Xenova/blip-image-captioning-base', priority: 2 },
+        translator: { task: 'translation', modelId: 'Xenova/opus-mt-en-fr', priority: 3 },
+        generator: { task: 'text2text-generation', modelId: 'Xenova/flan-t5-small', priority: 1 }
+      };
+
+      // --- STATELESS DATA STORAGE (RAM ONLY) ---
+      let noteContent = {
+        text: "",
+        images: [],
+        extractedText: [],
+        summaries: [],
+        actionItems: [],
+        multimodalDescriptions: []
+      };
+
+      // --- AI PROCESSING IMPROVEMENTS ---
+      const systemPrompt = `You are NOTE, an intelligent assistant that helps users understand and interact with their notes. 
+      You have access to the user's current note content, which may include text, images, and extracted information.
+      Always provide accurate, helpful responses based on the available content.
+      When citing information from the notes, reference the source (e.g., "from the uploaded image" or "mentioned in the text").
+      For calculations, use precise mathematical operations.
+      Maintain a professional, helpful tone in all responses.`;
+
+      // --- ENHANCED MODEL LOADING WITH GUARANTEED LOADING ---
+      async function loadModel(modelName, isRetry = false) {
+        if (models[modelName]) {
+          // Model is already loaded, warm it up if needed
+          await warmupModel(modelName);
+          return models[modelName];
+        }
+        
+        if (modelStatus[modelName] === 'loading') {
+          // Wait for loading to complete
+          while (modelStatus[modelName] === 'loading') {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+          return models[modelName] || null;
+        }
+
+        const config = modelConfigs[modelName];
+        if (!config) {
+            console.error(`Configuration for model "${modelName}" not found.`);
+            return null;
+        }
+
+        if (isRetry) modelStatus[modelName] = 'idle';
+        modelStatus[modelName] = 'loading';
+        saveModelStatusToStorage();
+        
+        // Only show loading indicator if this is not a background preload
+        if (!isRetry && activeLoadingProcesses === 0) {
+          showLoading();
+        }
+        
+        try {
+          // Create a timeout promise
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error("Model loading timeout")), 120000); // 120 second timeout
+          });
+          
+          // The pipeline function will automatically use the browser's Cache API
+          const modelPromise = pipeline(config.task, config.modelId);
+          const model = await Promise.race([modelPromise, timeoutPromise]);
+          
+          models[modelName] = model;
+          modelStatus[modelName] = 'ready';
+          saveModelStatusToStorage();
+          
+          // Warm up the model to reduce initial response time
+          await warmupModel(modelName);
+          
+          // Only hide loading if this was the only active loading process
+          if (activeLoadingProcesses === 1) {
+            hideLoading();
+          }
+          
+          if (modelName === 'generator' && isLiteMode) {
+              isLiteMode = false;
+              addMessage("✅ Full AI capabilities restored! I'm ready for complex questions.", "note");
+          }
+          
+          return model;
+        } catch (error) {
+          modelStatus[modelName] = 'retry';
+          saveModelStatusToStorage();
+          console.error(`Failed to load ${modelName} model:`, error);
+          
+          // Only hide loading if this was the only active loading process
+          if (activeLoadingProcesses === 1) {
+            hideLoading();
+          }
+          
+          // Implement retry logic with exponential backoff
+          if (!isRetry) {
+            const retryDelay = Math.min(15000, 3000 * Math.pow(2, modelStatus[modelName].retryCount || 0));
+            modelStatus[modelName].retryCount = (modelStatus[modelName].retryCount || 0) + 1;
+            
+            setTimeout(() => {
+              if (modelStatus[modelName] === 'retry') {
+                loadModel(modelName, true);
+              }
+            }, retryDelay);
+          } else {
+            // If retry also failed, try again with longer delay
+            setTimeout(() => {
+              if (modelStatus[modelName] === 'retry') {
+                loadModel(modelName, true);
+              }
+            }, 30000); // 30 seconds for subsequent retries
+          }
+          
+          if (modelName === 'generator' && !isLiteMode) {
+              isLiteMode = true;
+              addMessage("⚠️ My advanced AI model failed to load. I'm switching to Lite Mode to continue helping you. You can try typing 'retry generator' to restore full features.", "note", "assistant-highlight");
+          } else if (!isRetry) {
+              addMessage(`Error: The ${modelName} model failed to load. I'll try to load it in the background. Type 'retry ${modelName}' to try immediately.`, "note");
+          }
+          return null;
+        }
+      }
+      
+      // Warm up a model to reduce initial response time
+      async function warmupModel(modelName) {
+        if (!models[modelName]) return;
+        
+        try {
+          const model = models[modelName];
+          const config = modelConfigs[modelName];
+          
+          // Run a simple inference to warm up the model
+          switch (config.task) {
+            case 'image-to-text':
+              // For image models, we'll warm up when an image is actually processed
+              break;
+            case 'translation':
+              await model('Hello');
+              break;
+            case 'text2text-generation':
+              await model('Hello', { max_new_tokens: 5 });
+              break;
+          }
+        } catch (error) {
+          console.error(`Error warming up ${modelName} model:`, error);
+        }
+      }
+      
+      // --- AGGRESSIVE PRELOADING ---
+      async function preloadAllModels() {
+        // Sort models by priority (lower number = higher priority)
+        const sortedModels = Object.entries(modelConfigs)
+          .sort(([, a], [, b]) => a.priority - b.priority)
+          .map(([name]) => name);
+        
+        // Load all models sequentially to ensure they all load
+        for (const modelName of sortedModels) {
+          if (modelStatus[modelName] === 'idle') {
+            await loadModel(modelName);
+            // Small delay between models to prevent overwhelming
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
+      }
+      
+      // Start preloading immediately
+      preloadAllModels();
+      
+      // --- UI HELPERS ---
+      function showLoading() { 
+        activeLoadingProcesses++;
+        if (activeLoadingProcesses === 1) {
+          hideLoading();
+          const loaderDiv = document.createElement('div'); 
+          loaderDiv.classList.add('message', 'note', 'loading-indicator-wrapper'); 
+          loaderDiv.innerHTML = `<div class="loading-indicator"><svg class="infinity-loader" viewBox="0 0 100 40"><path d="M20,20 Q30,5 40,20 T60,20 T80,20" /></svg></div>`; 
+          chatDiv.appendChild(loaderDiv); 
+          chatContainer.scrollTop = chatContainer.scrollHeight; 
+        }
+      }
+      function hideLoading() { 
+        activeLoadingProcesses--;
+        if (activeLoadingProcesses <= 0) {
+          activeLoadingProcesses = 0;
+          const existingLoader = chatDiv.querySelector('.loading-indicator-wrapper'); 
+          if (existingLoader) { existingLoader.remove(); }
+        }
+      }
+      
+      function addMessage(text, sender, extraClass = '') {
+        const messageDiv = document.createElement('div'); 
+        messageDiv.classList.add('message', sender);
+        if(extraClass) messageDiv.classList.add(extraClass);
+        
+        const bubbleDiv = document.createElement('div'); 
+        bubbleDiv.classList.add('message-bubble'); 
+        bubbleDiv.textContent = text;
+        
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const timestampSpan = document.createElement('span'); 
+        timestampSpan.classList.add('timestamp'); 
+        timestampSpan.textContent = timestamp;
+
+        messageDiv.appendChild(bubbleDiv); 
+        messageDiv.appendChild(timestampSpan); 
+        
+        chatDiv.appendChild(messageDiv);
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+        return messageDiv;
+      }
+      
+      function addWikipediaMessage(text, imageUrl) {
+        const messageDiv = document.createElement('div'); 
+        messageDiv.classList.add('message', 'note', 'wikipedia-result');
+        
+        const bubbleDiv = document.createElement('div'); 
+        bubbleDiv.classList.add('message-bubble');
+
+        if (imageUrl) {
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.classList.add('wikipedia-result-image');
+            bubbleDiv.appendChild(img);
+        }
+
+        const textP = document.createElement('p');
+        textP.classList.add('wikipedia-result-text');
+        textP.textContent = text;
+        bubbleDiv.appendChild(textP);
+        
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const timestampSpan = document.createElement('span'); 
+        timestampSpan.classList.add('timestamp'); 
+        timestampSpan.textContent = timestamp;
+
+        messageDiv.appendChild(bubbleDiv); 
+        messageDiv.appendChild(timestampSpan); 
+        
+        chatDiv.appendChild(messageDiv);
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+        return messageDiv;
+      }
+
+      function addStreamingMessage(text, sender, extraClass = '') {
+        const messageDiv = document.createElement('div'); 
+        messageDiv.classList.add('message', sender);
+        if(extraClass) messageDiv.classList.add(extraClass);
+        
+        const bubbleDiv = document.createElement('div'); 
+        bubbleDiv.classList.add('message-bubble'); 
+        
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const timestampSpan = document.createElement('span'); 
+        timestampSpan.classList.add('timestamp'); 
+        timestampSpan.textContent = timestamp;
+
+        messageDiv.appendChild(bubbleDiv); 
+        messageDiv.appendChild(timestampSpan); 
+        
+        chatDiv.appendChild(messageDiv);
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+        
+        return {
+          messageDiv,
+          bubbleDiv,
+          appendText: function(text) {
+            bubbleDiv.textContent += text;
+            chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+          }
+        };
+      }
+
+      function updateConversationHistory(role, content) {
+        conversationHistory.push({ role, content, timestamp: Date.now() });
+        if (conversationHistory.length > 20) {
+          conversationHistory = conversationHistory.slice(-20);
+        }
+      }
+      
+      // --- CORE FEATURE FUNCTIONS (Rewritten) ---
+      async function handleWikipedia(query) {
+        try {
+          const url = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts|pageimages&exintro&explaintext&pithumbsize=400&format=json&origin=&titles=${encodeURIComponent(query)}`;
+          const response = await fetch(url);
+          
+          if (!response.ok) throw new Error('Wikipedia API request failed.');
+
+          const data = await response.json();
+          const pages = data.query.pages;
+          const pageId = Object.keys(pages)[0];
+
+          if (pageId === "-1" || pages[pageId].missing) {
+            const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
+            const searchResponse = await fetch(searchUrl);
+            const searchData = await searchResponse.json();
+            
+            if (searchData.query.search.length > 0) {
+              const title = searchData.query.search[0].title;
+              return await handleWikipedia(title);
+            } else {
+              return null;
+            }
+          }
+
+          const page = pages[pageId];
+          return {
+            text: page.extract || "No summary available.",
+            imageUrl: page.thumbnail ? page.thumbnail.source : null
+          };
+        } catch (error) {
+          console.error("Wikipedia error:", error);
+          return null;
+        }
+      }
+
+      async function handleMath(expression) {
+        const generator = await loadModel('generator');
+        if (!generator) return "The calculation model is not available.";
+        try {
+          const prompt = `Solve the following math problem and only give the final numerical answer: ${expression}`;
+          const result = await generator(prompt, { max_new_tokens: 50 });
+          return `The result is: ${result[0].generated_text}`;
+        } catch (error) {
+          console.error("Error in math calculation:", error);
+          return 'I could not solve this math problem. Please try rephrasing it.';
+        }
+      }
+
+      async function handleChart(dataString) {
+        const generator = await loadModel('generator');
+        if (!generator) return "The chart description model is not available.";
+        try {
+          const prompt = `Describe the data in this chart in a sentence. The data is: ${dataString}`;
+          const result = await generator(prompt, { max_new_tokens: 100 });
+          return `Chart Analysis: ${result[0].generated_text}`;
+        } catch (error) {
+          console.error("Error in chart description:", error);
+          return 'I could not describe this chart. Please check the data format.';
+        }
+      }
+
+      async function extractTextWithTransformers(imageUrl) {
+        try {
+          const ocr = await loadModel('ocr');
+          if (!ocr) return "Could not load OCR model.";
+          
+          const result = await ocr(imageUrl);
+          const text = result.map(item => item.generated_text).join(' ');
+          return text;
+        } catch (error) {
+          console.error("Error in Transformers OCR:", error);
+          return "I had trouble reading text from this image.";
+        }
+      }
+
+      async function processUploadedContent(imageUrl) {
+        showLoading();
+        
+        try {
+          const imageId = `img_${Date.now()}`;
+          noteContent.images.push({ id: imageId, url: imageUrl });
+
+          const [ocrText, captionResult] = await Promise.all([
+            extractTextWithTransformers(imageUrl),
+            (async () => {
+              const captioner = await loadModel('captioner');
+              return captioner ? await captioner(imageUrl) : null;
+            })()
+          ]);
+          
+          if (ocrText && ocrText.trim()) {
+            noteContent.extractedText.push({ imageId, text: ocrText });
+            addMessage(`Extracted Text:\n${ocrText}`, "note");
+          }
+          
+          const description = captionResult ? captionResult[0].generated_text : "Could not generate a description.";
+          noteContent.multimodalDescriptions.push({ imageId, description });
+          addMessage(`Image Analysis:\n${description}`, "note");
+
+          if (ocrText && ocrText.trim()) {
+            const generator = await loadModel('generator');
+            if (generator) {
+              try {
+                const summaryPrompt = `Summarize the following text concisely: "${ocrText}"`;
+                const summaryResult = await generator(summaryPrompt, { max_new_tokens: 100 });
+                const summary = summaryResult[0].generated_text;
+                noteContent.summaries.push({ imageId, text: summary });
+
+                const actionPrompt = `Extract any action items or tasks from the following text. If none, respond with "No action items found.": "${ocrText}"`;
+                const actionResult = await generator(actionPrompt, { max_new_tokens: 100 });
+                const actionItems = actionResult[0].generated_text;
+                
+                if (actionItems && !actionItems.includes("No action items found")) {
+                  noteContent.actionItems.push({ imageId, items: actionItems });
+                  addMessage(`Action Items:\n${actionItems}`, "note", "assistant-highlight");
+                }
+              } catch (error) {
+                console.error("Error generating summary or action items:", error);
+              }
+            }
+          }
+          
+          hideLoading();
+        } catch (error) {
+          console.error("Error in aggressive upfront processing:", error);
+          hideLoading();
+          addMessage("I had trouble processing this image. Please try again.", "note");
+        }
+      }
+
+      function classifyIntent(query) {
+        const lowerQuery = query.toLowerCase();
+        if (lowerQuery.includes('calculate') || lowerQuery.includes('solve') || lowerQuery.includes('math')) return 'math';
+        if (lowerQuery.includes('what') || lowerQuery.includes('who') || lowerQuery.includes('tell me about') || lowerQuery.includes('find')) return 'research';
+        if (lowerQuery.includes('summarize') || lowerQuery.includes('summary')) return 'summary';
+        return 'general';
+      }
+
+      async function retrieveRelevantContent(query) {
+        const queryWords = query.toLowerCase().split(/\s+/).filter(word => word.length > 2);
+        let relevantContent = { text: [], extractedText: [], summaries: [], multimodalDescriptions: [] };
+        
+        if (noteContent.text && queryWords.some(word => noteContent.text.toLowerCase().includes(word))) {
+          relevantContent.text.push(noteContent.text);
+        }
+        noteContent.extractedText.forEach(item => {
+          if (queryWords.some(word => item.text.toLowerCase().includes(word))) {
+            relevantContent.extractedText.push({ text: item.text, imageId: item.imageId });
+          }
+        });
+        return relevantContent;
+      }
+
+      async function generateStreamingResponse(prompt, messageElement) {
+        try {
+          const generator = await loadModel('generator');
+          if (!generator) {
+            messageElement.appendText("I'm having trouble loading my AI model. Please try again later.");
+            return;
+          }
+          const result = await generator(prompt, { max_new_tokens: 150 });
+          const responseText = result[0].generated_text;
+          
+          let i = 0;
+          const streamInterval = setInterval(() => {
+            if (i < responseText.length) {
+              messageElement.appendText(responseText[i]);
+              i++;
+            } else {
+              clearInterval(streamInterval);
+            }
+          }, 10);
+        } catch (error) {
+          console.error("Error generating streaming response:", error);
+          messageElement.appendText("I had trouble generating a response. Please try again.");
+        }
+      }
+
+      function buildComprehensivePrompt(userQuery) {
+        let prompt = systemPrompt + "\n\n";
+        if (noteContent.text) prompt += `Note Content:\n${noteContent.text}\n\n`;
+        if (noteContent.extractedText.length > 0) {
+          prompt += "Extracted Text from Images:\n";
+          noteContent.extractedText.forEach(item => { prompt += `${item.text}\n`; });
+          prompt += "\n";
+        }
+        if (conversationHistory.length > 0) {
+          prompt += "Recent Conversation:\n";
+          conversationHistory.slice(-5).forEach(item => { prompt += `${item.role}: ${item.content}\n`; });
+          prompt += "\n";
+        }
+        prompt += `User Query: ${userQuery}\n\nPlease provide a helpful response based on the available information:`;
+        return prompt;
+      }
+
+      async function generateResponse(userMessage) {
+        const lowerText = userMessage.toLowerCase().trim();
+
+        if (lowerText.startsWith('math:')) {
+            return await handleMath(userMessage.substring(5).trim());
+        } else if (lowerText.startsWith('wiki:')) {
+            const query = userMessage.substring(5).trim();
+            const wikiData = await handleWikipedia(query);
+            if (!wikiData) {
+                return `Sorry, I couldn't find a Wikipedia article for "${query}".`;
+            }
+
+            const generator = await loadModel('generator');
+            if (!generator) {
+                addWikipediaMessage(wikiData.text, wikiData.imageUrl);
+                return null;
+            }
+
+            const prompt = `The user asked about "${query}". Based on the following information from Wikipedia, provide a clear, concise, and easy-to-understand explanation. Do not just repeat the text, synthesize it. Information: "${wikiData.text}"`;
+            const result = await generator(prompt, { max_new_tokens: 200 });
+            const synthesizedText = result[0].generated_text;
+            
+            addWikipediaMessage(synthesizedText, wikiData.imageUrl);
+            return null;
+
+        } else if (lowerText.startsWith('chart:')) {
+            return await handleChart(userMessage.substring(6).trim());
+        } else if (lowerText.startsWith('translate to french')) {
+            const translator = await loadModel('translator');
+            if (!translator) return "Translation model is not available.";
+            const textToTranslate = userMessage.substring('translate to french'.length).trim();
+            const result = await translator(textToTranslate);
+            return `French translation: ${result[0].translation_text}`;
+        } else if (isLiteMode) {
+            const wikiData = await handleWikipedia(userMessage);
+            if (wikiData) {
+                addWikipediaMessage(wikiData.text, wikiData.imageUrl);
+                return null;
+            }
+            return "I'm in Lite Mode and couldn't find information. Please ask a simpler question or type 'retry generator'.";
+        } else {
+            const intent = classifyIntent(userMessage);
+            if (intent === 'math') {
+                return await handleMath(userMessage);
+            } else if (intent === 'research') {
+                const relevantContent = await retrieveRelevantContent(userMessage);
+                let prompt = systemPrompt + "\n\n";
+                if (relevantContent.text.length > 0) prompt += `From your notes:\n${relevantContent.text.join('\n')}\n\n`;
+                if (relevantContent.extractedText.length > 0) {
+                    prompt += `From extracted text:\n`;
+                    relevantContent.extractedText.forEach(item => { prompt += `${item.text}\n`; });
+                    prompt += "\n";
+                }
+                prompt += `Question: ${userMessage}\n\nPlease provide a helpful response based on the available information, citing sources when relevant:`;
+                const messageElement = addStreamingMessage("", "note");
+                generateStreamingResponse(prompt, messageElement);
+                return null;
+            } else if (intent === 'summary') {
+                let allContent = noteContent.text || "";
+                noteContent.extractedText.forEach(item => { allContent += "\n" + item.text; });
+                if (allContent.trim()) {
+                    const generator = await loadModel('generator');
+                    if (!generator) return "I need the AI model to create a summary, but it's not available.";
+                    const prompt = `Summarize the following content:\n${allContent}`;
+                    const result = await generator(prompt, { max_new_tokens: 150 });
+                    return `Summary: ${result[0].generated_text}`;
+                } else {
+                    return "There's no content to summarize yet. Please add some text or upload an image.";
+                }
+            } else {
+                const prompt = buildComprehensivePrompt(userMessage);
+                const messageElement = addStreamingMessage("", "note");
+                generateStreamingResponse(prompt, messageElement);
+                return null;
+            }
+        }
+      }
+
+      // --- EVENT LISTENERS ---
+      sendBtn.addEventListener("click", async () => {
+        const message = userInput.value.trim();
+        if (!message) return;
+        
+        addMessage(message, "user");
+        updateConversationHistory("user", message);
+        userInput.value = "";
+        
+        let response = "I had trouble processing that.";
+        const lowerText = message.toLowerCase();
+
+        if (lowerText === 'help') {
+            response = `Available commands:
+            - "math: 2+2" or "math: what is 15 times 25?" for calculations.
+            - "wiki: Einstein" for enhanced Wikipedia summaries with images.
+            - "chart: A:10, B:20" to get a text description of chart data.
+            - "translate to french hello" for translation.
+            - Upload an image for analysis (OCR, captioning).
+            - "status" to check model status.
+            - "free memory" to unload models from current session.
+            - "clear cache" to clear all cached models and statuses.
+            - "retry <model_name>" to reload a failed model (e.g., 'retry generator').
+            - "summarize" to get a summary of all content.
+            - Ask questions about your uploaded content for research.`;
+        } else if (lowerText === 'status') {
+            response = `Model Status:\n${Object.entries(modelStatus).map(([name, status]) => `- ${name}: ${status}`).join('\n')}`;
+        } else if (lowerText === 'free memory') {
+            for (const modelName in models) {
+                delete models[modelName];
+                // Do not reset modelStatus to 'idle' here, let it remember it was 'ready'
+            }
+            response = "Models have been unloaded from the current session's memory. Their cached status is preserved.";
+        } else if (lowerText === 'clear cache') {
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    names.forEach(function(name) {
+                        caches.delete(name);
+                    });
+                });
+            }
+            localStorage.removeItem(STORAGE_KEY);
+            for (const modelName in models) {
+                delete models[modelName];
+            }
+            modelStatus = { ocr: 'idle', captioner: 'idle', translator: 'idle', generator: 'idle' };
+            saveModelStatusToStorage();
+            response = "All caches and statuses have been cleared. Models will be re-downloaded on next use.";
+        } else if (lowerText.startsWith('retry ')) {
+            const modelName = lowerText.split(' ')[1];
+            if (modelStatus.hasOwnProperty(modelName) && modelConfigs.hasOwnProperty(modelName)) {
+                await loadModel(modelName, true);
+                response = `Retrying ${modelName} model...`;
+            } else {
+                response = `Unknown model: ${modelName}. Available models to retry: ${Object.keys(modelConfigs).join(', ')}.`;
+            }
+        } else {
+            response = await generateResponse(message);
+        }
+        
+        if (response !== null) {
+            addMessage(response, "note");
+            updateConversationHistory("assistant", response);
+        }
+      });
+
+      fileInput.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const imageUrl = e.target.result;
+            addImageMessage(imageUrl, "user");
+            await processUploadedContent(imageUrl);
+            fileInput.value = '';
+        };
+        reader.readAsDataURL(file);
+      });
+
+      uploadBtn.addEventListener('click', () => fileInput.click());
+      
+      userInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendBtn.click();
+        }
+      });
+
+      function addImageMessage(url, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', sender);
+        const img = document.createElement('img');
+        img.src = url;
+        img.classList.add('message-image');
+        messageDiv.appendChild(img);
+        chatDiv.appendChild(messageDiv);
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+      }
+
+      chatContainer.addEventListener('scroll', () => {
+        const isAtBottom = chatContainer.scrollHeight - chatContainer.scrollTop <= chatContainer.clientHeight + 50;
+        scrollToBottomBtn.classList.toggle('hidden', isAtBottom);
+      });
+
+      scrollToBottomBtn.addEventListener('click', () => {
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+      });
+
+      modeToggleBtn.addEventListener('click', () => {
+        isEducationalMode = !isEducationalMode;
+        const icon = modeToggleBtn.querySelector('i');
+        icon.classList.toggle('fa-brain', !isEducationalMode);
+        icon.classList.toggle('fa-graduation-cap', isEducationalMode);
+        addMessage(isEducationalMode ? "Educational Mode enabled." : "Conversation Mode enabled.", "note");
+      });
+    });
+  </script>
+</body>
+</html>
