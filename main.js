@@ -1,3 +1,4 @@
+// Import the pipeline function from transformers.js
 import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@latest';
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -46,7 +47,6 @@ document.addEventListener("DOMContentLoaded", function() {
       loaderDiv.classList.add('message', 'note', 'loading-indicator-wrapper'); 
       loaderDiv.innerHTML = `<div class="loading-indicator"><svg class="infinity-loader" viewBox="0 0 100 40"><path d="M20,20 Q30,5 40,20 T60,20 T80,20" /></svg></div>`; 
       chatDiv.appendChild(loaderDiv); 
-      chatContainer.scrollTop = chatContainer.scrollHeight; 
     }
   }
   function hideLoading() { 
@@ -72,13 +72,18 @@ document.addEventListener("DOMContentLoaded", function() {
     messageDiv.appendChild(bubbleDiv); 
     messageDiv.appendChild(timestampSpan); 
     chatDiv.appendChild(messageDiv);
-    chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+
+    // --- FIX: Robust Auto-Scroll ---
+    // Use requestAnimationFrame to ensure the scroll happens after the new message is rendered
+    requestAnimationFrame(() => {
+      chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+    });
+
     return messageDiv;
   }
 
   // --- SIMPLIFIED & RELIABLE LOGIC ---
   async function handleGeneralQuery(query) {
-    // 1. Try Wikipedia first for a reliable answer
     let wikiResult = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`)
       .then(res => res.ok ? res.json() : null)
       .then(data => data ? data.extract : null)
@@ -88,7 +93,6 @@ document.addEventListener("DOMContentLoaded", function() {
       return wikiResult;
     }
 
-    // 2. If Wikipedia fails, use the AI model as a fallback
     const generator = await loadModel('generator');
     if (!generator) return "I'm having trouble connecting to my knowledge base.";
     
@@ -108,7 +112,6 @@ document.addEventListener("DOMContentLoaded", function() {
     let response = "I had trouble processing that.";
     const lowerText = message.toLowerCase();
 
-    // Handle simple greetings with pre-defined responses
     if (lowerText === 'hi' || lowerText === 'hello') {
         response = "Hello there! How can I help you today?";
     } else if (lowerText === 'help') {
@@ -125,7 +128,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!translator) response = "Translation model is not available.";
         else { const textToTranslate = message.substring('translate to french'.length).trim(); const result = await translator(textToTranslate); response = `French translation: ${result[0].translation_text}`; }
     } else {
-        // For all other general questions, use the simplified handler
         response = await handleGeneralQuery(message);
     }
     
@@ -158,7 +160,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const messageDiv = document.createElement('div'); messageDiv.classList.add('message', sender);
     const img = document.createElement('img'); img.src = url; img.classList.add('message-image');
     messageDiv.appendChild(img); chatDiv.appendChild(messageDiv);
-    chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+    // Also ensure scrolling after adding an image
+    requestAnimationFrame(() => {
+      chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+    });
   }
 
   chatContainer.addEventListener('scroll', () => {
@@ -167,14 +172,12 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   scrollToBottomBtn.addEventListener('click', () => { chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' }); });
 
-  // --- FIXED MODE TOGGLE ---
   modeToggleBtn.addEventListener('click', () => {
     isEducationalMode = !isEducationalMode;
     const icon = modeToggleBtn.querySelector('i');
     icon.classList.toggle('fa-brain', !isEducationalMode);
     icon.classList.toggle('fa-graduation-cap', isEducationalMode);
     modeToggleBtn.title = isEducationalMode ? 'Switch to Casual Mode' : 'Switch to Educational Mode';
-    // Use a simple, hard-coded message
     const modeMessage = isEducationalMode ? "Educational Mode enabled. I will provide more detailed answers." : "Casual Mode enabled. I'm ready for a more relaxed conversation.";
     addMessage(modeMessage, "note", "assistant-highlight");
   });
