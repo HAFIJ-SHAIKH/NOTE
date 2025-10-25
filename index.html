@@ -334,15 +334,50 @@
         multimodalDescriptions: []
       };
 
-      // --- AI PROCESSING IMPROVEMENTS ---
-      const systemPrompt = `You are NOTE, an intelligent assistant that helps users understand and interact with their notes. 
-      You have access to the user's current note content, which may include text, images, and extracted information.
-      Always provide accurate, helpful responses based on the available content.
-      When citing information from the notes, reference the source (e.g., "from the uploaded image" or "mentioned in the text").
-      For calculations, use precise mathematical operations.
-      Maintain a professional, helpful tone in all responses.`;
+      // --- ENHANCED AI PROCESSING WITH BETTER UNDERSTANDING ---
+      const systemPrompt = `You are NOTE, an intelligent note-taking assistant designed to help users capture, organize, and understand information. 
+      
+      Your core capabilities:
+      1. Answer questions based on the user's notes and uploaded content
+      2. Extract and summarize key information from text and images
+      3. Identify action items and tasks from content
+      4. Provide context-aware responses that reference specific content
+      5. Maintain conversational context and remember previous interactions
+      
+      When responding:
+      - Always reference the source of your information (e.g., "from the uploaded image" or "mentioned in your notes")
+      - If you don't know something, admit it clearly
+      - For calculations, use precise mathematical operations
+      - Keep responses concise but informative
+      - Maintain a professional, helpful tone
+      
+      Current context:
+      - You're running in a browser environment
+      - The user may have uploaded images or text
+      - You have access to Wikipedia for factual information
+      - You can perform OCR on images to extract text`;
 
-      // --- SIMPLIFIED MODEL LOADING ---
+      // --- BROWSER COMPATIBILITY CHECK ---
+      function checkBrowserCompatibility() {
+        const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+        const isBrave = /Brave/.test(navigator.userAgent);
+        
+        console.log(`Browser detected: ${isChrome ? 'Chrome' : isBrave ? 'Brave' : 'Other'}`);
+        
+        // Chrome-specific fixes
+        if (isChrome) {
+          console.log("Applying Chrome compatibility fixes");
+          // Chrome might need specific handling for WebAssembly
+          if (typeof WebAssembly === 'undefined') {
+            addMessage("⚠️ WebAssembly is not enabled in your Chrome browser. Please enable it in chrome://flags/ to use AI features.", "note", "assistant-highlight");
+            return false;
+          }
+        }
+        
+        return true;
+      }
+
+      // --- ENHANCED MODEL LOADING WITH BROWSER COMPATIBILITY ---
       async function loadModel(modelName, isRetry = false) {
         if (models[modelName]) {
           // Model is already loaded, warm it up if needed
@@ -467,6 +502,11 @@
       
       // --- SIMPLIFIED PRELOADING ---
       async function preloadEssentialModels() {
+        // Check browser compatibility first
+        if (!checkBrowserCompatibility()) {
+          return;
+        }
+        
         // Sort models by priority (lower number = higher priority)
         const sortedModels = Object.entries(modelConfigs)
           .sort(([, a], [, b]) => a.priority - b.priority)
@@ -524,7 +564,7 @@
         
         const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const timestampSpan = document.createElement('span'); 
-        timestampSpan.classList.add('timestamp'); 
+      timestampSpan.classList.add('timestamp'); 
         timestampSpan.textContent = timestamp;
 
         messageDiv.appendChild(bubbleDiv); 
@@ -573,7 +613,7 @@
         if(extraClass) messageDiv.classList.add(extraClass);
         
         const bubbleDiv = document.createElement('div'); 
-        bubbleDiv.classList.add('message-bubble'); 
+      bubbleDiv.classList.add('message-bubble'); 
         
         const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const timestampSpan = document.createElement('span'); 
@@ -603,10 +643,11 @@
         }
       }
       
-      // --- CORE FEATURE FUNCTIONS (Rewritten) ---
+      // --- ENHANCED CORE FEATURE FUNCTIONS ---
       async function handleWikipedia(query) {
         try {
-          const url = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts|pageimages&exintro&explaintext&pithumbsize=400&format=json&origin=&titles=${encodeURIComponent(query)}`;
+          // Use the Wikipedia API with proper parameters
+          const url = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts|pageimages&exintro&explaintext&pithumbsize=400&format=json&origin=*&titles=${encodeURIComponent(query)}`;
           const response = await fetch(url);
           
           if (!response.ok) throw new Error('Wikipedia API request failed.');
@@ -616,6 +657,7 @@
           const pageId = Object.keys(pages)[0];
 
           if (pageId === "-1" || pages[pageId].missing) {
+            // Try search if direct lookup failed
             const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
             const searchResponse = await fetch(searchUrl);
             const searchData = await searchResponse.json();
@@ -659,7 +701,7 @@
           const prompt = `Describe the data in this chart in a sentence. The data is: ${dataString}`;
           const result = await generator(prompt, { max_new_tokens: 100 });
           return `Chart Analysis: ${result[0].generated_text}`;
-        } catch (error) {
+          } catch (error) {
           console.error("Error in chart description:", error);
           return 'I could not describe this chart. Please check the data format.';
         }
@@ -670,10 +712,35 @@
           const ocr = await loadModel('ocr');
           if (!ocr) return "Could not load OCR model.";
           
-          const result = await ocr(imageUrl);
-          const text = result.map(item => item.generated_text).join(' ');
-          return text;
-        } catch (error) {
+          // Create an image element from the URL
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.src = imageUrl;
+          
+          // Wait for the image to load
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+          });
+          
+          // Create a canvas to get the image data
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+          
+          // Get the image data as a blob
+          canvas.toBlob(async (blob) => {
+            if (blob) {
+              const result = await ocr(blob);
+              const text = result.map(item => item.generated_text).join(' ');
+              return text;
+            }
+          }, 'image/jpeg');
+          
+          return "Could not process image.";
+          } catch (error) {
           console.error("Error in Transformers OCR:", error);
           return "I had trouble reading text from this image.";
         }
@@ -690,7 +757,37 @@
             extractTextWithTransformers(imageUrl),
             (async () => {
               const captioner = await loadModel('captioner');
-              return captioner ? await captioner(imageUrl) : null;
+              if (!captioner) return null;
+              
+              // Create an image element from the URL
+              const img = new Image();
+              img.crossOrigin = "anonymous";
+              img.src = imageUrl;
+              
+              // Wait for the image to load
+              await new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = reject;
+              });
+              
+              // Create a canvas to get the image data
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d');
+              canvas.width = img.width;
+              canvas.height = img.height;
+              ctx.drawImage(img, 0, 0);
+              
+              // Get the image data as a blob
+              return new Promise((resolve) => {
+                canvas.toBlob(async (blob) => {
+                  if (blob) {
+                    const result = await captioner(blob);
+                    resolve(result[0].generated_text);
+                  } else {
+                    resolve("Could not generate a description.");
+                  }
+                }, 'image/jpeg');
+              });
             })()
           ]);
           
@@ -699,7 +796,7 @@
             addMessage(`Extracted Text:\n${ocrText}`, "note");
           }
           
-          const description = captionResult ? captionResult[0].generated_text : "Could not generate a description.";
+          const description = captionResult || "Could not generate a description.";
           noteContent.multimodalDescriptions.push({ imageId, description });
           addMessage(`Image Analysis:\n${description}`, "note");
 
@@ -728,7 +825,7 @@
           
           hideLoading();
         } catch (error) {
-          console.error("Error in aggressive upfront processing:", error);
+          console.error("Error in processing uploaded content:", error);
           hideLoading();
           addMessage("I had trouble processing this image. Please try again.", "note");
         }
@@ -740,7 +837,7 @@
         if (lowerQuery.includes('what') || lowerQuery.includes('who') || lowerQuery.includes('tell me about') || lowerQuery.includes('find')) return 'research';
         if (lowerQuery.includes('summarize') || lowerQuery.includes('summary')) return 'summary';
         return 'general';
-      }
+        }
 
       async function retrieveRelevantContent(query) {
         const queryWords = query.toLowerCase().split(/\s+/).filter(word => word.length > 2);
@@ -784,17 +881,48 @@
 
       function buildComprehensivePrompt(userQuery) {
         let prompt = systemPrompt + "\n\n";
-        if (noteContent.text) prompt += `Note Content:\n${noteContent.text}\n\n`;
+        
+        // Add current note content
+      if (noteContent.text) {
+          prompt += `Current Note Content:\n${noteContent.text}\n\n`;
+        }
+        
+        // Add extracted text from images
         if (noteContent.extractedText.length > 0) {
           prompt += "Extracted Text from Images:\n";
-          noteContent.extractedText.forEach(item => { prompt += `${item.text}\n`; });
+          noteContent.extractedText.forEach(item => { 
+            prompt += `${item.text}\n`; 
+          });
           prompt += "\n";
         }
+        
+        // Add summaries
+        if (noteContent.summaries.length > 0) {
+          prompt += "Summaries:\n";
+          noteContent.summaries.forEach(item => { 
+            prompt += `${item.text}\n`; 
+          });
+          prompt += "\n";
+        }
+        
+        // Add action items
+        if (noteContent.actionItems.length > 0) {
+          prompt += "Action Items:\n";
+          noteContent.actionItems.forEach(item => { 
+            prompt += `${item.items}\n`; 
+          });
+          prompt += "\n";
+        }
+        
+        // Add conversation history
         if (conversationHistory.length > 0) {
           prompt += "Recent Conversation:\n";
-          conversationHistory.slice(-5).forEach(item => { prompt += `${item.role}: ${item.content}\n`; });
+          conversationHistory.slice(-5).forEach(item => { 
+            prompt += `${item.role}: ${item.content}\n`; 
+          });
           prompt += "\n";
         }
+        
         prompt += `User Query: ${userQuery}\n\nPlease provide a helpful response based on the available information:`;
         return prompt;
       }
@@ -813,7 +941,7 @@
 
             const generator = await loadModel('generator');
             if (!generator) {
-              addWikipediaMessage(wikiData.text, wikiData.imageUrl);
+                addWikipediaMessage(wikiData.text, wikiData.imageUrl);
                 return null;
             }
 
@@ -842,7 +970,7 @@
         } else {
             const intent = classifyIntent(userMessage);
             if (intent === 'math') {
-                return await handleMath(userMessage);
+              return await handleMath(userMessage);
             } else if (intent === 'research') {
                 const relevantContent = await retrieveRelevantContent(userMessage);
                 let prompt = systemPrompt + "\n\n";
@@ -865,7 +993,7 @@
                     const prompt = `Summarize the following content:\n${allContent}`;
                     const result = await generator(prompt, { max_new_tokens: 150 });
                     return `Summary: ${result[0].generated_text}`;
-                  } else {
+                } else {
                     return "There's no content to summarize yet. Please add some text or upload an image.";
                 }
             } else {
@@ -903,7 +1031,7 @@
             - "summarize" to get a summary of all content.
             - Ask questions about your uploaded content for research.`;
         } else if (lowerText === 'status') {
-          response = `Model Status:\n${Object.entries(modelStatus).map(([name, status]) => `- ${name}: ${status}`).join('\n')}`;
+            response = `Model Status:\n${Object.entries(modelStatus).map(([name, status]) => `- ${name}: ${status}`).join('\n')}`;
         } else if (lowerText === 'free memory') {
             for (const modelName in models) {
                 delete models[modelName];
@@ -919,7 +1047,7 @@
                 });
             }
             localStorage.removeItem(STORAGE_KEY);
-            for (const modelName in models) {
+           for (const modelName in models) {
                 delete models[modelName];
             }
             modelStatus = { ocr: 'idle', captioner: 'idle', translator: 'idle', generator: 'idle' };
@@ -948,7 +1076,7 @@
         if (!file) return;
         const reader = new FileReader();
         reader.onload = async (e) => {
-          const imageUrl = e.target.result;
+            const imageUrl = e.target.result;
             addImageMessage(imageUrl, "user");
             await processUploadedContent(imageUrl);
             fileInput.value = '';
@@ -962,7 +1090,7 @@
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
           sendBtn.click();
-        }
+          }
       });
 
       function addImageMessage(url, sender) {
