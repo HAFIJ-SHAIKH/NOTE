@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // =========================================================================
 
     const botReplies = {
-        // --- GREETINGS ---
+        // --- GREETINGS & BASIC CONVERSATION ---
         'greeting': {
             triggers: ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening'],
             replies: [
@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 "Hey! Ready to answer your questions."
             ]
         },
-        // --- BASIC CONVERSATION ---
         'well_being': {
             triggers: ['how are you', 'how are you doing'],
             replies: [
@@ -38,18 +37,51 @@ document.addEventListener("DOMContentLoaded", function() {
                 "My pleasure!"
             ]
         },
-        // --- COMMON KNOWLEDGE ---
-        'einstein': {
-            triggers: ['who is albert einstein', 'albert einstein', 'einstein'],
+        'capabilities': {
+            triggers: ['what can you do', 'help', 'features'],
             replies: [
-                "Albert Einstein was a German-born theoretical physicist who developed the theory of relativity, one of the two pillars of modern physics. His work is also known for its influence on the philosophy of science."
+                "I can answer questions on a wide range of topics. Try asking me about science, history, or geography!",
+                "My knowledge base includes facts about the world, famous people, technology, and much more. Just ask away!"
             ]
         },
+
+        // --- SCIENCE ---
+        'einstein': {
+            triggers: ['who is albert einstein', 'albert einstein', 'einstein', 'theory of relativity'],
+            replies: [
+                "Albert Einstein was a German-born theoretical physicist who developed the theory of relativity, one of the two pillars of modern physics. He is also famous for the mass-energy equivalence formula E=mc²."
+            ]
+        },
+        'gravity': {
+            triggers: ['what is gravity', 'gravity', 'newton'],
+            replies: [
+                "Gravity is a fundamental force that attracts objects with mass toward each other. The more massive an object, the stronger its gravitational pull. Isaac Newton famously formulated its laws."
+            ]
+        },
+        'photosynthesis': {
+            triggers: ['what is photosynthesis', 'photosynthesis'],
+            replies: [
+                "Photosynthesis is the process used by plants, algae, and some bacteria to convert light energy into chemical energy. They use sunlight, water, and carbon dioxide to create their food and release oxygen."
+            ]
+        },
+        'h2o': {
+            triggers: ['what is water', 'h2o', 'chemical formula for water'],
+            replies: [
+                "Water is a transparent, tasteless, odorless, and nearly colorless chemical substance. Its chemical formula is H₂O, meaning each of its molecules contains one oxygen and two hydrogen atoms."
+            ]
+        },
+
+        // --- GEOGRAPHY ---
         'capital_france': {
             triggers: ['capital of france', 'what is the capital of france', 'paris'],
             replies: [
-                "The capital of France is Paris.",
-                "It's Paris, the city of light!"
+                "The capital of France is Paris, known as the 'City of Light'."
+            ]
+        },
+        'capital_japan': {
+            triggers: ['capital of japan', 'what is the capital of japan', 'tokyo'],
+            replies: [
+                "The capital of Japan is Tokyo, a bustling metropolis."
             ]
         },
         'largest_ocean': {
@@ -58,6 +90,71 @@ document.addEventListener("DOMContentLoaded", function() {
                 "The Pacific Ocean is the largest and deepest of the world's five oceans."
             ]
         },
+        'highest_mountain': {
+            triggers: ['highest mountain', 'mount everest', 'tallest mountain'],
+            replies: [
+                "Mount Everest, located in the Himalayas, is the Earth's highest mountain above sea level."
+            ]
+        },
+        'sahara': {
+            triggers: ['sahara desert', 'largest desert'],
+            replies: [
+                "The Sahara Desert is the largest hot desert in the world, located in North Africa."
+            ]
+        },
+
+        // --- HISTORY ---
+        'marie_curie': {
+            triggers: ['who is marie curie', 'marie curie'],
+            replies: [
+                "Marie Curie was a Polish and naturalized-French physicist and chemist who conducted pioneering research on radioactivity. She was the first woman to win a Nobel Prize and the only person to win in two different scientific fields."
+            ]
+        },
+        'rome': {
+            triggers: ['roman empire', 'ancient rome'],
+            replies: [
+                "The Roman Empire was one of the largest empires in history, with territories throughout Europe, North Africa, and the Middle East. It left a lasting legacy on law, language, and engineering."
+            ]
+        },
+        'renaissance': {
+            triggers: ['what was the renaissance', 'renaissance'],
+            replies: [
+                "The Renaissance was a fervent period of European cultural, artistic, political and economic 'rebirth' following the Middle Ages. It saw the flourishing of art, science, and literature, with figures like Leonardo da Vinci and Michelangelo."
+            ]
+        },
+        'pyramids': {
+            triggers: ['egyptian pyramids', 'pyramids of giza'],
+            replies: [
+                "The Pyramids of Giza are ancient pyramid structures built as tombs for pharaohs. The Great Pyramid of Giza is the oldest of the Seven Wonders of the Ancient World."
+            ]
+        },
+
+        // --- TECHNOLOGY & COMPUTING ---
+        'internet': {
+            triggers: ['what is the internet', 'how does the internet work'],
+            replies: [
+                "The Internet is a global network of computers that allows billions of devices worldwide to be connected. It works by sending data in small packets across a vast network of routers and servers."
+            ]
+        },
+        'ai': {
+            triggers: ['what is artificial intelligence', 'ai', 'machine learning'],
+            replies: [
+                "Artificial Intelligence (AI) is a field of computer science dedicated to creating systems that can perform tasks that typically require human intelligence, such as learning, reasoning, and problem-solving."
+            ]
+        },
+        'blockchain': {
+            triggers: ['what is blockchain', 'bitcoin', 'cryptocurrency'],
+            replies: [
+                "A blockchain is a distributed, immutable digital ledger used to record transactions across many computers. It's the technology behind cryptocurrencies like Bitcoin."
+            ]
+        },
+        'cloud_computing': {
+            triggers: ['what is cloud computing', 'the cloud'],
+            replies: [
+                "Cloud computing is the delivery of computing services—including servers, storage, databases, networking, software—over the Internet ('the cloud'). It allows for flexible resources and faster innovation."
+            ]
+        },
+
         // --- IMPORTANT INFORMATION ---
         'privacy': {
             triggers: ['privacy', 'do you store my data'],
@@ -80,13 +177,14 @@ document.addEventListener("DOMContentLoaded", function() {
     // --- BOT BRAINS (DO NOT EDIT BELOW THIS LINE) ---
     // =========================================================================
 
+    // --- DOM Element References ---
     const chatContainer = document.getElementById("chat-container");
     const chatDiv = document.getElementById("chat");
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
     let messageIdCounter = 0;
 
-    // --- Loading Indicator Functions ---
+    // --- Core Functions ---
     function showLoading() { 
         hideLoading(); 
         const loaderDiv = document.createElement('div'); 
@@ -100,7 +198,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if (existingLoader) { existingLoader.remove(); } 
     }
 
-    // --- Message Sending & Response Logic ---
     const generateResponse = (userMessage) => {
         const lowerCaseMessage = userMessage.toLowerCase();
         for (const topic in botReplies) {
@@ -135,9 +232,11 @@ document.addEventListener("DOMContentLoaded", function() {
         
         chatDiv.appendChild(messageDiv);
         chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
-        return messageDiv; // Return the element to apply highlight later
+        return messageDiv; 
     }
 
+    // --- Event Listeners ---
+    // This is the corrected and robust event listener for the send button
     sendBtn.addEventListener("click", () => {
         const messageText = userInput.value.trim();
         if (messageText !== "") {
@@ -150,7 +249,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 const response = generateResponse(messageText);
                 const messageElement = addMessage(response, "note");
                 
-                // Apply highlight for informational messages
                 if (response.includes("is") || response.includes("are") || response.includes("was") || response.includes("were")) {
                     messageElement.classList.add('assistant-highlight');
                 }
@@ -158,5 +256,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    userInput.addEventListener("keypress", (event) => { if (event.key === "Enter") { sendBtn.click(); } });
+    // Allow sending messages with the "Enter" key
+    userInput.addEventListener("keypress", (event) => { 
+        if (event.key === "Enter") { 
+            sendBtn.click(); 
+        } 
+    });
 });
