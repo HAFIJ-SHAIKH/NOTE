@@ -1,40 +1,78 @@
-/* Basic body styling with a dark theme */
+/* --- Global Styles & Background --- */
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #000000; /* Pure black background */
-    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    margin: 0;
+    /* Vibrant gradient background */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #feca57 75%, #ff6b6b 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
 }
 
-/* The main chat window container */
+/* Animated gradient background */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* --- Chat Container (Glassmorphism) --- */
 .chat-container {
     width: 450px;
-    height: 700px;
-    background-color: #1a1a1a; /* Slightly lighter black for the container */
+    height: 80vh;
+    max-height: 700px;
+    background: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
+    backdrop-filter: blur(10px); /* Frosted glass effect */
+    -webkit-backdrop-filter: blur(10px); /* For Safari */
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border: 1px solid #333;
+    transition: transform 0.3s ease;
 }
 
-/* Chat header */
+.chat-container:hover {
+    transform: translateY(-5px);
+}
+
+/* --- Chat Header --- */
 .chat-header {
-    background-color: #0a0a0a; /* Darker header */
-    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 20px;
-    text-align: center;
-    font-size: 1.5em;
-    font-weight: 600;
-    border-bottom: 1px solid #333;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Area where messages are displayed */
+.chat-header h2 {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    background-color: #4ade80; /* Green */
+    border-radius: 50%;
+    margin-left: 10px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+
+/* --- Messages Area --- */
 .chat-messages {
     list-style-type: none;
     padding: 20px;
@@ -43,125 +81,145 @@ body {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 12px; /* Adds space between messages */
+    gap: 15px;
 }
 
-/* Scrollbar styling for webkit browsers */
-.chat-messages::-webkit-scrollbar {
-    width: 6px;
-}
-.chat-messages::-webkit-scrollbar-track {
-    background: #1a1a1a;
-}
-.chat-messages::-webkit-scrollbar-thumb {
-    background: #555;
-    border-radius: 3px;
-}
-.chat-messages::-webkit-scrollbar-thumb:hover {
-    background: #777;
-}
+/* Scrollbar Styling */
+.chat-messages::-webkit-scrollbar { width: 5px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 5px; }
 
-
-/* Individual message styling */
+/* --- Message Bubbles --- */
 .chat-messages li {
     padding: 12px 18px;
-    border-radius: 18px;
-    max-width: 80%;
+    border-radius: 20px;
+    max-width: 75%;
     word-wrap: break-word;
     line-height: 1.5;
-    font-size: 0.95em;
+    animation: fadeIn 0.4s ease-out;
 }
 
-/* User message style (right-aligned) */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 .user-message {
-    background-color: #2d2d2d;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
     align-self: flex-end;
-    color: #ffffff;
-    border-top-right-radius: 4px;
+    border-bottom-right-radius: 5px;
+    font-weight: 500;
 }
 
-/* Bot message style (left-aligned) with white glow */
 .bot-message {
-    background-color: #2d2d2d;
-    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.2);
     color: #ffffff;
-    border-top-left-radius: 4px;
-    /* White glowing light effect */
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    align-self: flex-start;
+    border-bottom-left-radius: 5px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
-/* Special style for "not found" messages with a red glow */
 .bot-message.error {
-    /* Red glowing light effect */
-    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
-    background-color: #3d1a1a; /* Slightly reddish tint to the background */
+    background: rgba(252, 165, 165, 0.3); /* Light red/rose */
+    box-shadow: 0 0 15px rgba(252, 165, 165, 0.5);
 }
 
-/* Input area at the bottom */
+/* --- Typing Indicator --- */
+.typing-indicator {
+    display: none; /* Hidden by default */
+    padding: 15px 20px;
+    align-self: flex-start;
+}
+
+.typing-indicator span {
+    height: 10px;
+    width: 10px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 2px;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+.typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+    0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* --- Input Area --- */
 .chat-input-area {
     display: flex;
     padding: 15px;
-    border-top: 1px solid #333;
-    background-color: #0a0a0a;
+    background: rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 #message-input {
     flex-grow: 1;
-    border: 1px solid #444;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 25px;
     padding: 12px 20px;
     font-size: 1em;
-    background-color: #1a1a1a;
-    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
     outline: none;
-    transition: border-color 0.3s;
+    transition: background 0.3s;
+}
+
+#message-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
 }
 
 #message-input:focus {
-    border-color: #555;
+    background: rgba(255, 255, 255, 0.15);
 }
 
-button {
-    background-color: #ffffff;
-    color: #000000;
+.chat-input-area button {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: #ffffff;
     border: none;
-    border-radius: 25px;
-    padding: 12px 25px;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
     margin-left: 10px;
     cursor: pointer;
-    font-size: 1em;
-    font-weight: 600;
-    transition: background-color 0.3s, transform 0.1s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-button:hover {
-    background-color: #f0f0f0;
+.chat-input-area button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-button:active {
+.chat-input-area button:active {
     transform: scale(0.95);
 }
 
+
 /* --- Responsive Design --- */
-/* For devices with a screen width of 600px or less */
 @media (max-width: 600px) {
     body {
-        align-items: stretch; /* Stretch container to full height */
-        padding: 10px; /* Add some padding to the edges */
+        padding: 10px;
     }
-
     .chat-container {
-        width: 100%; /* Full width */
-        height: 95vh; /* 95% of viewport height */
+        width: 100%;
+        height: 95vh;
         border-radius: 15px;
     }
-
-    .chat-header {
-        font-size: 1.3em;
-        padding: 15px;
-    }
-
     .chat-messages li {
-        max-width: 90%; /* Use more width on small screens */
+        max-width: 85%;
     }
 }
