@@ -1,0 +1,167 @@
+/* Basic body styling with a dark theme */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #000000; /* Pure black background */
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* The main chat window container */
+.chat-container {
+    width: 450px;
+    height: 700px;
+    background-color: #1a1a1a; /* Slightly lighter black for the container */
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #333;
+}
+
+/* Chat header */
+.chat-header {
+    background-color: #0a0a0a; /* Darker header */
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: 600;
+    border-bottom: 1px solid #333;
+}
+
+/* Area where messages are displayed */
+.chat-messages {
+    list-style-type: none;
+    padding: 20px;
+    margin: 0;
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Adds space between messages */
+}
+
+/* Scrollbar styling for webkit browsers */
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+.chat-messages::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 3px;
+}
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+
+/* Individual message styling */
+.chat-messages li {
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 80%;
+    word-wrap: break-word;
+    line-height: 1.5;
+    font-size: 0.95em;
+}
+
+/* User message style (right-aligned) */
+.user-message {
+    background-color: #2d2d2d;
+    align-self: flex-end;
+    color: #ffffff;
+    border-top-right-radius: 4px;
+}
+
+/* Bot message style (left-aligned) with white glow */
+.bot-message {
+    background-color: #2d2d2d;
+    align-self: flex-start;
+    color: #ffffff;
+    border-top-left-radius: 4px;
+    /* White glowing light effect */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+/* Special style for "not found" messages with a red glow */
+.bot-message.error {
+    /* Red glowing light effect */
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+    background-color: #3d1a1a; /* Slightly reddish tint to the background */
+}
+
+/* Input area at the bottom */
+.chat-input-area {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid #333;
+    background-color: #0a0a0a;
+}
+
+#message-input {
+    flex-grow: 1;
+    border: 1px solid #444;
+    border-radius: 25px;
+    padding: 12px 20px;
+    font-size: 1em;
+    background-color: #1a1a1a;
+    color: #fff;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#message-input:focus {
+    border-color: #555;
+}
+
+button {
+    background-color: #ffffff;
+    color: #000000;
+    border: none;
+    border-radius: 25px;
+    padding: 12px 25px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+button:hover {
+    background-color: #f0f0f0;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+/* --- Responsive Design --- */
+/* For devices with a screen width of 600px or less */
+@media (max-width: 600px) {
+    body {
+        align-items: stretch; /* Stretch container to full height */
+        padding: 10px; /* Add some padding to the edges */
+    }
+
+    .chat-container {
+        width: 100%; /* Full width */
+        height: 95vh; /* 95% of viewport height */
+        border-radius: 15px;
+    }
+
+    .chat-header {
+        font-size: 1.3em;
+        padding: 15px;
+    }
+
+    .chat-messages li {
+        max-width: 90%; /* Use more width on small screens */
+    }
+}
