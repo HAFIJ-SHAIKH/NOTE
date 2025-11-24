@@ -1,92 +1,69 @@
-// Wait for the DOM to be fully loaded before running the script
 document.addEventListener('DOMContentLoaded', () => {
-
-    // Get references to our HTML elements
     const chatMessages = document.querySelector('.chat-messages');
     const messageInput = document.getElementById('message-input');
     const sendButton = document.querySelector('button');
+    const typingIndicator = document.querySelector('.typing-indicator');
 
-    // Function to add a message to the chat
-    // Added an optional 'isError' parameter
     const addMessage = (message, sender, isError = false) => {
         const messageElement = document.createElement('li');
-        
-        // Determine the class based on the sender
         if (sender === 'user') {
             messageElement.classList.add('user-message');
         } else {
             messageElement.classList.add('bot-message');
-            // If it's an error, add the 'error' class for the red glow
             if (isError) {
                 messageElement.classList.add('error');
             }
         }
-        
         messageElement.textContent = message;
         chatMessages.appendChild(messageElement);
-        
-        // Scroll to the latest message
         chatMessages.scrollTop = chatMessages.scrollHeight;
     };
 
-    // Function to generate a bot response based on user input
     const generateResponse = (userMessage) => {
         const lowerCaseMessage = userMessage.toLowerCase();
-
         if (lowerCaseMessage.includes('hello') || lowerCaseMessage.includes('hi')) {
-            return "Hello there! How can I help you today?";
+            return "Hey! What's on your mind?";
         } else if (lowerCaseMessage.includes('how are you')) {
-            return "I'm a simple bot, but I'm doing great! Thanks for asking.";
+            return "I'm feeling electric! Thanks for asking.";
         } else if (lowerCaseMessage.includes('what is your name')) {
-            return "I am NOTE, your aesthetic assistant.";
+            return "You can call me NOTE. I'm here to chat.";
         } else if (lowerCaseMessage.includes('bye')) {
-            return "Goodbye! Have a great day.";
+            return "Catch you later!";
         } else {
-            // This is the "not found" case
-            return "I'm sorry, I don't have an answer for that.";
+            return "Hmm, I'm not sure how to respond to that. Can you try rephrasing?";
         }
     };
 
-    // Function to handle sending a message
     const handleSendMessage = () => {
         const userMessage = messageInput.value.trim();
+        if (userMessage === '') return;
 
-        // Don't send an empty message
-        if (userMessage === '') {
-            return;
-        }
-
-        // Add the user's message to the chat
         addMessage(userMessage, 'user');
-
-        // Clear the input field
         messageInput.value = '';
 
-        // Simulate a "thinking" delay before the bot responds
+        // Show typing indicator
+        typingIndicator.style.display = 'flex';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
         setTimeout(() => {
+            // Hide typing indicator
+            typingIndicator.style.display = 'none';
+            
             const botResponse = generateResponse(userMessage);
-            
-            // Check if the response is the "not found" message
-            const isError = botResponse === "I'm sorry, I don't have an answer for that.";
-            
-            // Add the bot's response, passing the error flag
+            const isError = botResponse === "Hmm, I'm not sure how to respond to that. Can you try rephrasing?";
             addMessage(botResponse, 'bot', isError);
-        }, 1000); // 1-second delay
+        }, 1500); // Slightly longer delay for realism
     };
 
-    // Add event listener for the send button click
     sendButton.addEventListener('click', (e) => {
-        e.preventDefault(); // Prevent form submission
+        e.preventDefault();
         handleSendMessage();
     });
 
-    // Add event listener for the 'Enter' key in the input field
     messageInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
-            // Prevent the default form submission behavior
             event.preventDefault();
             handleSendMessage();
         }
     });
-
 });
