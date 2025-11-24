@@ -3,35 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOTE - Modern Chatbot</title>
-    <!-- Google Fonts -->
+    <title>NOTE - Intelligent Assistant</title>
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="chat-container">
-        <div class="chat-header">
-            <h2>NOTE</h2>
-            <span class="status-indicator"></span>
+    <div class="chat-wrapper">
+        <div class="chat-container">
+            <header class="chat-header">
+                <div class="header-info">
+                    <h1>NOTE</h1>
+                    <span class="status-text">● Online</span>
+                </div>
+                <i class="ph-fill ph-info"></i>
+            </header>
+
+            <main class="chat-messages" id="chat-messages">
+                <!-- Messages will be dynamically added here -->
+            </main>
+
+            <div class="typing-indicator" id="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <footer class="chat-input-area">
+                <form id="message-form">
+                    <input type="text" id="message-input" placeholder="Ask NOTE anything..." autocomplete="off" required>
+                    <button type="submit" id="send-button">
+                        <i class="ph-bold ph-paper-plane-right"></i>
+                    </button>
+                </form>
+            </footer>
         </div>
-        <ul class="chat-messages">
-            <!-- Messages will be dynamically added here -->
-        </ul>
-        <!-- Typing Indicator (hidden by default) -->
-        <div class="typing-indicator">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-        <form class="chat-input-area">
-            <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off" required>
-            <button type="submit">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            </button>
-        </form>
     </div>
 
     <script src="script.js"></script>
