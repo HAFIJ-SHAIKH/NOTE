@@ -177,14 +177,12 @@ document.addEventListener("DOMContentLoaded", function() {
     // --- BOT BRAINS (DO NOT EDIT BELOW THIS LINE) ---
     // =========================================================================
 
-    // --- DOM Element References ---
     const chatContainer = document.getElementById("chat-container");
     const chatDiv = document.getElementById("chat");
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
     let messageIdCounter = 0;
 
-    // --- Core Functions ---
     function showLoading() { 
         hideLoading(); 
         const loaderDiv = document.createElement('div'); 
@@ -235,9 +233,11 @@ document.addEventListener("DOMContentLoaded", function() {
         return messageDiv; 
     }
 
-    // --- Event Listeners ---
-    // This is the corrected and robust event listener for the send button
-    sendBtn.addEventListener("click", () => {
+    // --- Event Listener with Fix ---
+    sendBtn.addEventListener("click", (event) => {
+        // --- SAFETY FIX IS HERE ---
+        event.preventDefault(); // This prevents any default browser action (like page reload)
+
         const messageText = userInput.value.trim();
         if (messageText !== "") {
             addMessage(messageText, "user");
@@ -256,7 +256,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Allow sending messages with the "Enter" key
     userInput.addEventListener("keypress", (event) => { 
         if (event.key === "Enter") { 
             sendBtn.click(); 
