@@ -84,110 +84,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const chatDiv = document.getElementById("chat");
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
-    const scrollToBottomBtn = document.getElementById("scrollToBottomBtn");
-    const replyContextBar = document.getElementById("replyContextBar");
-    const replyContextContent = document.querySelector('.reply-context-content');
-    const replyQuoteText = document.getElementById("replyQuoteText");
-    const replyQuoteSender = document.getElementById("replyQuoteSender");
-    const replyCancelBtn = document.getElementById("replyCancelBtn");
-
-    let replyingTo = null;
-    let originalMessageToReplyTo = null;
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let currentSwipedMessage = null;
     let messageIdCounter = 0;
-
-    // --- Mobile Swipe Gesture Logic ---
-    function handleTouchStart(e) {
-        const messageElement = e.target.closest('.message');
-        if (!messageElement) return;
-        currentSwipedMessage = messageElement;
-        const touch = e.touches[0];
-        touchStartX = touch.pageX;
-        touchStartY = touch.pageY;
-    }
-
-    function handleTouchMove(e) {
-        if (!currentSwipedMessage) return;
-        const touch = e.touches[0];
-        const deltaX = touch.pageX - touchStartX;
-        const deltaY = touch.pageY - touchStartY;
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-            e.preventDefault();
-            currentSwipedMessage.style.transform = `translateX(${deltaX}px)`;
-        }
-    }
-
-    function handleTouchEnd(e) {
-        if (!currentSwipedMessage) return;
-        const touch = e.changedTouches[0];
-        const endX = touch.pageX;
-        const deltaX = endX - touchStartX;
-        currentSwipedMessage.style.transition = 'transform 0.2s ease-out';
-        currentSwipedMessage.style.transform = 'translateX(0)';
-        const isHorizontalSwipe = Math.abs(deltaX) > 50;
-        if (isHorizontalSwipe) {
-            const messageBubble = currentSwipedMessage.querySelector('.message-bubble');
-            if (messageBubble) {
-                if (currentSwipedMessage.classList.contains('note') && deltaX > 0) {
-                    showReplyContext(messageBubble.textContent, currentSwipedMessage);
-                } else if (currentSwipedMessage.classList.contains('user') && deltaX < 0) {
-                    showReplyContext(messageBubble.textContent, currentSwipedMessage);
-                }
-            }
-        }
-        currentSwipedMessage = null;
-    }
-
-    if ('ontouchstart' in window) {
-        chatDiv.addEventListener('touchstart', handleTouchStart, { passive: false });
-        chatDiv.addEventListener('touchmove', handleTouchMove, { passive: false });
-        chatDiv.addEventListener('touchend', handleTouchEnd, { passive: true });
-    }
-
-    // --- Reply Feature Functions ---
-    function showReplyContext(messageText, messageElement) {
-        replyingTo = messageText;
-        originalMessageToReplyTo = messageElement;
-        const sender = messageElement.classList.contains('note') ? 'NOTE' : 'You';
-        replyQuoteSender.textContent = `${sender}:`;
-        replyQuoteText.textContent = messageText;
-        replyContextBar.style.display = 'flex';
-        userInput.placeholder = 'Add a reply...';
-        userInput.focus();
-    }
-
-    function hideReplyContext() {
-        replyingTo = null;
-        originalMessageToReplyTo = null;
-        replyContextBar.style.display = 'none';
-        userInput.placeholder = 'Type a message...';
-    }
-    
-    replyCancelBtn.addEventListener('click', hideReplyContext);
-
-    // Event delegation for reply buttons (for desktop)
-    chatDiv.addEventListener('click', (e) => {
-        if (e.target.classList.contains('reply-btn')) {
-            const messageElement = e.target.closest('.message');
-            const messageBubble = messageElement.querySelector('.message-bubble');
-            if (messageBubble) {
-                showReplyContext(messageBubble.textContent, messageElement);
-            }
-        }
-    });
-
-    // --- Jump to Original Message Logic ---
-    replyContextContent.addEventListener('click', () => {
-        if (originalMessageToReplyTo) {
-            originalMessageToReplyTo.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            originalMessageToReplyTo.classList.add('original-highlight');
-            setTimeout(() => {
-                originalMessageToReplyTo.classList.remove('original-highlight');
-            }, 2000);
-        }
-    });
 
     // --- Loading Indicator Functions ---
     function showLoading() { 
@@ -202,16 +99,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const existingLoader = chatDiv.querySelector('.loading-indicator-wrapper'); 
         if (existingLoader) { existingLoader.remove(); } 
     }
-
-    // --- Scroll to Bottom Button Logic ---
-    chatContainer.addEventListener('scroll', () => {
-        if (chatContainer.scrollTop < chatContainer.scrollHeight - chatContainer.clientHeight - 100) { 
-            scrollToBottomBtn.classList.remove('hidden'); 
-        } else { 
-            scrollToBottomBtn.classList.add('hidden'); 
-        }
-    });
-    scrollToBottomBtn.addEventListener('click', () => { chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' }); });
 
     // --- Message Sending & Response Logic ---
     const generateResponse = (userMessage) => {
@@ -229,23 +116,9 @@ document.addEventListener("DOMContentLoaded", function() {
         return defaultReplies[randomDefaultIndex];
     };
 
-    function addMessage(text, sender, isReply = false, originalMessageElement = null) {
+    function addMessage(text, sender) {
         const messageDiv = document.createElement('div'); 
         messageDiv.classList.add('message', sender);
-        
-        if (isReply && originalMessageElement) {
-            messageDiv.classList.add('reply');
-            const originalBubble = originalMessageElement.querySelector('.message-bubble');
-            const originalId = originalBubble.dataset.messageId || `msg-${messageIdCounter++}`;
-            originalBubble.dataset.messageId = originalId;
-
-            const quoteBlock = document.createElement('div');
-            quoteBlock.classList.add('reply-quote-block');
-            quoteBlock.dataset.originalId = originalId;
-            const sender_name = originalMessageElement.classList.contains('note') ? 'NOTE' : 'You';
-            quoteBlock.innerHTML = `<span class="reply-quote-sender">${sender_name}</span><span class="reply-quote-text">${replyingTo}</span>`;
-            messageDiv.appendChild(quoteBlock);
-        }
         
         const bubbleDiv = document.createElement('div'); 
         bubbleDiv.classList.add('message-bubble'); 
@@ -268,11 +141,8 @@ document.addEventListener("DOMContentLoaded", function() {
     sendBtn.addEventListener("click", () => {
         const messageText = userInput.value.trim();
         if (messageText !== "") {
-            const isReply = replyingTo !== null;
-            addMessage(messageText, "user", isReply, originalMessageToReplyTo);
-            
+            addMessage(messageText, "user");
             userInput.value = '';
-            hideReplyContext();
 
             showLoading();
             setTimeout(() => {
