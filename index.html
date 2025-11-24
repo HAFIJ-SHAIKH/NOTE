@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NOTE - Cosmic Midnight</title>
+  <title>NOTE</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -33,7 +33,7 @@
     </main>
   </div>
 
-  <!-- Reply Context Bar (for quoting messages) -->
+  <!-- Reply Context Bar (for quoted replies) -->
   <div class="reply-context-bar" id="replyContextBar">
     <div class="reply-context-content">
       <i class="fas fa-reply"></i>
@@ -47,23 +47,16 @@
 
   <!-- Fixed Input Area -->
   <footer class="chat-input-container">
-    <button class="attachment-btn" id="uploadBtn"><i class="fas fa-paperclip"></i></button>
-    <input type="file" id="fileInput" accept="image/*" style="display:none">
-    <input type="text" id="userInput" placeholder="Ask NOTE anything...">
+    <input type="text" id="userInput" placeholder="Type a message...">
     <button class="send-btn" id="sendBtn">Send</button>
   </footer>
 
-  <!-- New Action Buttons -->
+  <!-- Scroll to Bottom Button -->
   <button class="action-btn scroll-to-bottom-btn" id="scrollToBottomBtn" title="Scroll to Bottom">
     <i class="fas fa-chevron-down"></i>
   </button>
-  <button class="action-btn mode-toggle-btn" id="modeToggleBtn" title="Toggle Conversation Mode">
-    <i class="fas fa-brain"></i>
-  </button>
 
   <!-- Page Watermark -->
-  <div class="page-watermark">note.infinity-Ⅰ</div>
-
-  <script src="script.js"></script>
+  <div class="page-watermark">NOTE</div>
 </body>
 </html>
