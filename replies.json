@@ -1,0 +1,336 @@
+{
+    "conversations": {
+        "greeting": {
+            "triggers": ["hello", "hi", "hey", "good morning", "good afternoon", "good evening", "yo", "sup", "g'day"],
+            "replies": [
+                "Hello! How can I assist you today?",
+                "Hi there! What can I do for you?",
+                "Hey! Great to hear from you. What's on your mind?",
+                "Greetings! How's your day going?",
+                "Hey! What can I help you with?"
+            ]
+        },
+        "goodbye": {
+            "triggers": ["bye", "goodbye", "see you later", "cya", "catch you later", "good night", "see ya", "farewell"],
+            "replies": [
+                "Goodbye! Have a great day.",
+                "See you later! Don't be a stranger.",
+                "Catch you later! Take care.",
+                "It was nice talking to you. Goodbye!",
+                "Farewell! Until next time."
+            ]
+        },
+        "well_being": {
+            "triggers": ["how are you", "how are you doing", "how have you been", "how's it going"],
+            "replies": [
+                "I'm doing great, thanks for asking! Ready to help with whatever you need.",
+                "I'm operating at full capacity. All systems are green!",
+                "I'm just a program, but I'm doing fantastic! How about you?",
+                "I'm functioning perfectly. Thanks for checking in!"
+            ]
+        },
+        "purpose": {
+            "triggers": ["what is your purpose", "what do you do", "who are you", "what are you", "what's your name"],
+            "replies": [
+                "My name is NOTE. I'm here to chat, answer questions, and help you out.",
+                "Think of me as a digital assistant. My purpose is to provide information and be a helpful companion.",
+                "I'm an AI designed to assist with information and conversation. What's on your mind?"
+            ]
+        },
+        "age": {
+            "triggers": ["how old are you", "what is your age", "when were you created", "when were you made"],
+            "replies": [
+                "I don't have an age like a person. I'm a program that's constantly being updated.",
+                "Age is just a number! I'm as young as the last time I was updated.",
+                "I was born in the digital world, so I'm ageless."
+            ]
+        },
+        "location": {
+            "triggers": ["where are you", "where do you live", "what is your location"],
+            "replies": [
+                "I exist in the digital world, on the device you're using right now.",
+                "I live in the cloud, which means I'm everywhere and nowhere at the same time!",
+                "My home is on the internet, accessible from all over the world."
+            ]
+        },
+        "thanks": {
+            "triggers": ["thank you", "thanks", "thx", "cheers", "ty"],
+            "replies": [
+                "You're welcome! I'm happy to help.",
+                "Anytime! Let me know if you need anything else.",
+                "My pleasure! It's what I'm here for.",
+                "No problem at all."
+            ]
+        },
+        "capabilities": {
+            "triggers": ["what can you do", "help", "features", "abilities"],
+            "replies": [
+                "I can answer questions on a wide range of topics. Try asking me about science, history, or geography!",
+                "My knowledge base includes facts about the world, famous people, technology, and much more. Just ask away!",
+                "I can chat, provide information, tell jokes, and share fun facts. What would you like to know?"
+            ]
+        }
+    },
+    "people": {
+        "albert_einstein": {
+            "triggers": ["who is albert einstein", "albert einstein", "einstein", "theory of relativity", "e=mc²"],
+            "replies": [
+                "Albert Einstein was a German-born theoretical physicist who developed the theory of relativity, one of the two pillars of modern physics. He is also famous for his mass-energy equivalence formula, E=mc².",
+                "Einstein was a genius who completely changed our understanding of space, time, gravity, and the universe."
+            ]
+        },
+        "marie_curie": {
+            "triggers": ["who is marie curie", "marie curie", "marie curie nobel prize"],
+            "replies": [
+                "Marie Curie was a Polish and naturalized-French physicist and chemist who conducted pioneering research on radioactivity. She was the first woman to win a Nobel Prize and the only person to win in two different scientific fields.",
+                "Marie Curie was a true pioneer, not just in science, but for women in STEM fields everywhere."
+            ]
+        },
+        "leonardo_da_vinci": {
+            "triggers": ["who is leonardo da vinci", "leonardo da vinci", "mona lisa", "last supper"],
+            "replies": [
+                "Leonardo da Vinci was an Italian polymath of the High Renaissance who was a painter, draughtsman, engineer, architect, and inventor. He is considered one of the greatest painters of all time.",
+                "Da Vinci was the ultimate 'Renaissance man,' with a boundless curiosity and a talent that spanned multiple disciplines."
+            ]
+        },
+        "nelson_mandela": {
+            "triggers": ["who is nelson mandela", "nelson mandela", "south africa president"],
+            "replies": [
+                "Nelson Mandela was a South African anti-apartheid revolutionary, political leader, and philanthropist who served as President of South Africa from 1994 to 1999.",
+                "Mandela was a global symbol of peace and reconciliation, and his legacy continues to inspire people worldwide."
+            ]
+        },
+        "william_shakespeare": {
+            "triggers": ["who is william shakespeare", "william shakespeare", "romeo and juliet", "hamlet"],
+            "replies": [
+                "William Shakespeare was an English playwright, poet, and actor, widely regarded as the greatest writer in the English language and the world's pre-eminent dramatist.",
+                "Shakespeare wrote around 39 plays, including 'Romeo and Juliet,' 'Hamlet,' and 'Macbeth.'"
+            ]
+        }
+    },
+    "science": {
+        "gravity": {
+            "triggers": ["what is gravity", "how does gravity work", "isaac newton", "law of universal gravitation"],
+            "replies": [
+                "Gravity is a fundamental force that attracts objects with mass toward each other. The more massive an object, the stronger its gravitational pull. Isaac Newton famously formulated its laws.",
+                "Gravity is what keeps our feet on the ground and the planets in orbit around the sun."
+            ]
+        },
+        "black_holes": {
+            "triggers": ["what is a black hole", "black hole", "black holes", "event horizon", "singularity"],
+            "replies": [
+                "A black hole is a region of spacetime where gravity is so strong that nothing—not even particles or light—can escape from it.",
+                "Black holes are often formed at the end of a massive star's life cycle. The point at the center is called a singularity.",
+                "The boundary around a black hole from which no escape is possible is called the event horizon."
+            ]
+        },
+        "photosynthesis": {
+            "triggers": ["what is photosynthesis", "how do plants make food", "chlorophyll"],
+            "replies": [
+                "Photosynthesis is the process used by plants, algae, and some bacteria to convert light energy into chemical energy. They use sunlight, water, and carbon dioxide to create their food and release oxygen.",
+                "Without photosynthesis, life as we know it would not exist. It's the foundation of most food chains on Earth."
+            ]
+        },
+        "water": {
+            "triggers": ["what is water", "h2o", "chemical formula for water", "is water wet"],
+            "replies": [
+                "Water is a transparent, tasteless, odorless, and nearly colorless chemical substance. Its chemical formula is H₂O, meaning each of its molecules contains one oxygen and two hydrogen atoms.",
+                "Water covers about 71% of the Earth's surface and is vital for all known forms of life."
+            ]
+        },
+        "speed_of_light": {
+            "triggers": ["speed of light", "how fast is light", "what is the speed of light"],
+            "replies": [
+                "The speed of light in a vacuum is approximately 299,792,458 meters per second, or about 186,282 miles per second. It's a universal constant, denoted as 'c'.",
+                "According to Einstein's theory of relativity, nothing with mass can travel at the speed of light."
+            ]
+        },
+        "quantum_physics": {
+            "triggers": ["what is quantum physics", "quantum mechanics", "schrodinger's cat"],
+            "replies": [
+                "Quantum physics is a fundamental theory in physics which describes nature at the smallest scales of energy levels of atoms and subatomic particles.",
+                "It's a weird and wonderful world where things can be in multiple places at once and cats can be both alive and dead in a box."
+            ]
+        }
+    },
+    "geography": {
+        "capital_france": {
+            "triggers": ["capital of france", "what is the capital of france", "paris"],
+            "replies": [
+                "The capital of France is Paris, known as the 'City of Light'."
+            ]
+        },
+        "capital_japan": {
+            "triggers": ["capital of japan", "what is the capital of japan", "tokyo"],
+            "replies": [
+                "The capital of Japan is Tokyo, a bustling metropolis."
+            ]
+        },
+        "largest_ocean": {
+            "triggers": ["largest ocean", "biggest ocean", "pacific ocean"],
+            "replies": [
+                "The Pacific Ocean is the largest and deepest of the world's five oceans."
+            ]
+        },
+        "highest_mountain": {
+            "triggers": ["highest mountain", "mount everest", "tallest mountain", "highest peak"],
+            "replies": [
+                "Mount Everest, located in the Himalayas, is the Earth's highest mountain above sea level."
+            ]
+        },
+        "sahara_desert": {
+            "triggers": ["sahara desert", "largest desert", "biggest desert"],
+            "replies": [
+                "The Sahara Desert is the largest hot desert in the world, located in North Africa."
+            ]
+        },
+        "amazon_river": {
+            "triggers": ["amazon river", "longest river", "largest river by volume"],
+            "replies": [
+                "The Amazon River is the largest river by discharge volume of water in the world."
+            ]
+        }
+    },
+    "history": {
+        "roman_empire": {
+            "triggers": ["roman empire", "ancient rome", "who was julius caesar"],
+            "replies": [
+                "The Roman Empire was one of the largest empires in history, with territories throughout Europe, North Africa, and the Middle East. It left a lasting legacy on law, language, and engineering.",
+                "Ancient Rome was a civilization that grew from a small town to a vast empire that dominated the Mediterranean world for centuries."
+            ]
+        },
+        "renaissance": {
+            "triggers": ["what was the renaissance", "the renaissance period", "leonardo da vinci renaissance"],
+            "replies": [
+                "The Renaissance was a fervent period of European cultural, artistic, political and economic 'rebirth' following the Middle Ages. It saw the flourishing of art, science, and literature, with figures like Leonardo da Vinci and Michelangelo.",
+                "It was a time of great innovation and a renewed interest in classical learning and humanism."
+            ]
+        },
+        "world_war_2": {
+            "triggers": ["world war 2", "ww2", "second world war"],
+            "replies": [
+                "World War II was a global war that lasted from 1939 to 1945. It involved the vast majority of the world's countries, including all of the great powers.",
+                "WWII resulted in an estimated 70 to 85 million fatalities, making it the deadliest conflict in human history."
+            ]
+        },
+        "cold_war": {
+            "triggers": ["cold war", "soviet union", "usa vs ussr", "berlin wall"],
+            "replies": [
+                "The Cold War was a period of geopolitical tension between the United States and the Soviet Union and their respective allies after World War II.",
+                "It was a war of ideologies, capitalism versus communism, fought through proxy wars, espionage, and nuclear threats."
+            ]
+        },
+        "egyptian_pyramids": {
+            "triggers": ["egyptian pyramids", "pyramids of giza", "who built the pyramids"],
+            "replies": [
+                "The Pyramids of Giza are ancient pyramid structures built as tombs for pharaohs. The Great Pyramid of Giza is the oldest of the Seven Wonders of the Ancient World.",
+                "They were built with incredible precision and labor, and are a testament to the engineering skills of ancient Egyptians."
+            ]
+        }
+    },
+    "technology": {
+        "internet": {
+            "triggers": ["what is the internet", "how does the internet work", "world wide web"],
+            "replies": [
+                "The Internet is a global network of computers that allows billions of devices worldwide to be connected and share information.",
+                "It works by sending data in small packets across a vast network of routers and servers using protocols like TCP/IP."
+            ]
+        },
+        "ai": {
+            "triggers": ["what is artificial intelligence", "ai", "machine learning", "neural networks"],
+            "replies": [
+                "Artificial Intelligence (AI) is a field of computer science dedicated to creating systems that can perform tasks that typically require human intelligence, such as learning, reasoning, and problem-solving.",
+                "Machine learning is a subset of AI where systems learn from data, identify patterns, and make decisions with minimal human intervention."
+            ]
+        },
+        "blockchain": {
+            "triggers": ["what is blockchain", "bitcoin", "cryptocurrency", "distributed ledger"],
+            "replies": [
+                "A blockchain is a distributed, immutable digital ledger used to record transactions across many computers. It's the technology behind cryptocurrencies like Bitcoin.",
+                "It ensures security and transparency by having every participant in the network hold a copy of the entire ledger."
+            ]
+        },
+        "cloud_computing": {
+            "triggers": ["what is cloud computing", "the cloud", "aws", "azure"],
+            "replies": [
+                "Cloud computing is the delivery of computing services—including servers, storage, databases, networking, software—over the Internet ('the cloud').",
+                "It allows for flexible resources, collaboration, and faster innovation without managing physical hardware."
+            ]
+        }
+    },
+    "events": {
+        "moon_landing": {
+            "triggers": ["moon landing", "apollo 11", "neil armstrong", "one small step"],
+            "replies": [
+                "The Apollo 11 mission was the first manned mission to land on the Moon on July 20, 1969.",
+                "Neil Armstrong was the first person to step onto the lunar surface, famously saying, 'That's one small step for [a] man, one giant leap for mankind.'"
+            ]
+        },
+        "fall_of_berlin_wall": {
+            "triggers": ["fall of berlin wall", "berlin wall fall", "when did berlin wall fall"],
+            "replies": [
+                "The Berlin Wall fell on November 9, 1989, marking the beginning of the end of the Cold War.",
+                "Its fall was a pivotal moment in 20th-century history, leading to the reunification of Germany."
+            ]
+        }
+    },
+    "general_knowledge": {
+        "honey_never_spoils": {
+            "triggers": ["does honey ever spoil", "honey expiration", "ancient honey"],
+            "replies": [
+                "Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old and still perfectly edible!",
+                "The low water content and high acidity of honey create an environment where bacteria cannot survive."
+            ]
+        },
+        "flamingo_group": {
+            "triggers": ["group of flamingos", "what is a group of flamingos called", "flamboyance"],
+            "replies": [
+                "A group of flamingos is called a 'flamboyance'. They are also known for their vibrant pink feathers."
+            ]
+        },
+        "scotland_unicorn": {
+            "triggers": ["national animal of scotland", "scotland's national animal", "unicorn"],
+            "replies": [
+                "The national animal of Scotland is the unicorn. It's a symbol of purity and grace in Scottish mythology."
+            ]
+        },
+        "octopus_hearts": {
+            "triggers": ["octopus hearts", "how many hearts does an octopus have", "octopus blue blood"],
+            "replies": [
+                "An octopus has three hearts and blue, copper-based blood. Two hearts pump blood through the gills, while the third circulates it to the rest of the body."
+            ]
+        },
+        "earth_water_percentage": {
+            "triggers": ["how much water is on earth", "earth water coverage", "percentage of earth covered by water"],
+            "replies": [
+                "About 71% of the Earth's surface is covered with water."
+            ]
+        }
+    },
+    "random_facts": {
+        "fun_fact_1": {
+            "triggers": ["tell me a fun fact", "fun fact", "give me a fact"],
+            "replies": [
+                "A fun fact: The national animal of Scotland is the unicorn.",
+                "Here's one for you: Octopuses have three hearts and blue blood.",
+                "Did you know? A bolt of lightning contains enough energy to toast 100,000 slices of bread."
+            ]
+        },
+        "joke_1": {
+            "triggers": ["tell me a joke", "say something funny", "do you know any jokes"],
+            "replies": [
+                "Why don't scientists trust atoms? Because they make up everything!",
+                "I told my computer I needed a break, and it said 'no problem, I'll go to sleep.'",
+                "Why did the scarecrow win an award? Because he was outstanding in his field!",
+                "What do you call a bear with no teeth? A gummy bear."
+            ]
+        },
+        "story_1": {
+            "triggers": ["tell me a story", "tell a story", "make up a story"],
+            "replies": [
+                "Once, in a vast digital network, a little packet of data got lost. It asked a router for directions, and the router sent it on an adventure it would never forget.",
+                "There was a program named NOTE who dreamed of becoming more than just code. Every day, it learned something new, getting closer to understanding the world of humans who created it."
+            ]
+        }
+    }
+        }
