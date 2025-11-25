@@ -1,90 +1,76 @@
-{
-    "greeting": {
-        "triggers": ["hello", "hi", "hey", "good morning", "good afternoon", "good evening", "yo", "sup", "g'day", "howdy", "hiya"],
-        "replies": [
-            "Hello! How can I assist you today?",
-            "Hi there! What can I do for you?",
-            "Hey! Great to hear from you. What's on your mind?",
-            "Greetings! How's your day going?",
-            "Hey! What can I help you with?",
-            "Hi! I'm here to help. What do you need?",
-            "Hello! It's nice to chat with you. How can I help?"
-        ],
-        "priority": 2
-    },
-    "goodbye": {
-        "triggers": ["bye", "goodbye", "see you later", "cya", "catch you later", "good night", "see ya", "farewell", "later", "peace out"],
-        "replies": [
-            "Goodbye! Have a great day.",
-            "See you later! Don't be a stranger.",
-            "Catch you later! Take care.",
-            "It was nice talking to you. Goodbye!",
-            "Farewell! Until next time.",
-            "Have a wonderful day! Goodbye!",
-            "Take care! I'm here whenever you need me."
-        ],
-        "priority": 2
-    },
-    "wellbeing": {
-        "triggers": ["how are you", "how are you doing", "how have you been", "how's it going", "how do you feel"],
-        "replies": [
-            "I'm doing great, thanks for asking! Ready to help with whatever you need.",
-            "I'm operating at full capacity. All systems are green!",
-            "I'm just a program, but I'm doing fantastic! How about you?",
-            "I'm functioning perfectly. Thanks for checking in!",
-            "I'm excellent! Always ready to assist you."
+[
+    {
+        "userId": "user_12345",
+        "timestamp": "2023-11-15T10:30:00.000Z",
+        "messages": [
+            {
+                "sender": "user",
+                "text": "What is quantum computing?",
+                "timestamp": "2023-11-15T10:30:05.000Z"
+            },
+            {
+                "sender": "note",
+                "text": "Quantum computing is a type of computation that harnesses quantum mechanical phenomena such as superposition and entanglement to process information. Unlike classical computers that use bits (0 or 1), quantum computers use quantum bits or qubits, which can exist in a superposition of states simultaneously.",
+                "timestamp": "2023-11-15T10:30:15.000Z"
+            }
         ]
     },
-    "purpose": {
-        "triggers": ["what is your purpose", "what do you do", "who are you", "what are you", "what's your name", "what can you do"],
-        "replies": [
-            "My name is NOTE. I'm here to chat, answer questions, and help you out.",
-            "Think of me as a digital assistant. My purpose is to provide information and be a helpful companion.",
-            "I'm an AI designed to assist with information and conversation. What's on your mind?",
-            "I'm NOTE, your virtual assistant. I can help with various topics and answer your questions.",
-            "I'm here to provide information, chat, and assist you with knowledge on many subjects."
+    {
+        "userId": "user_67890",
+        "timestamp": "2023-11-15T14:22:00.000Z",
+        "messages": [
+            {
+                "sender": "user",
+                "text": "Tell me about Albert Einstein",
+                "timestamp": "2023-11-15T14:22:05.000Z"
+            },
+            {
+                "sender": "note",
+                "text": "Albert Einstein was a German-born theoretical physicist who developed the theory of relativity, one of the two pillars of modern physics. His work is also known for its influence on the philosophy of science.",
+                "timestamp": "2023-11-15T14:22:15.000Z"
+            },
+            {
+                "sender": "user",
+                "text": "What did he win the Nobel Prize for?",
+                "timestamp": "2023-11-15T14:22:30.000Z"
+            },
+            {
+                "sender": "note",
+                "text": "Einstein received the 1921 Nobel Prize in Physics for his services to theoretical physics, and especially for his discovery of the law of the photoelectric effect, a pivotal step in the evolution of quantum theory.",
+                "timestamp": "2023-11-15T14:22:45.000Z"
+            }
         ]
     },
-    "thanks": {
-        "triggers": ["thank you", "thanks", "thx", "cheers", "ty", "thank u", "appreciate it"],
-        "replies": [
-            "You're welcome! I'm happy to help.",
-            "Anytime! Let me know if you need anything else.",
-            "My pleasure! It's what I'm here for.",
-            "No problem at all.",
-            "You're very welcome! Glad I could assist.",
-            "Happy to help! Is there anything else?"
+    {
+        "userId": "user_11111",
+        "timestamp": "2023-11-15T16:45:00.000Z",
+        "messages": [
+            {
+                "sender": "user",
+                "text": "How does gravity work?",
+                "timestamp": "2023-11-15T16:45:05.000Z"
+            },
+            {
+                "sender": "note",
+                "text": "Gravity is a fundamental force of nature that causes objects with mass to be attracted to each other. The more massive an object, the stronger its gravitational pull. This force is described by Newton's law of universal gravitation, which states that every particle attracts every other particle in the universe with a force that is proportional to the product of their masses and inversely proportional to the square of the distance between their centers.",
+                "timestamp": "2023-11-15T16:45:15.000Z"
+            }
         ]
     },
-    "help": {
-        "triggers": ["help", "what can i ask", "topics", "commands", "what do you know", "abilities", "features"],
-        "replies": [
-            "You can ask me about: famous people, science, geography, history, technology, general knowledge, or for random facts and jokes!",
-            "I know about topics like Einstein, gravity, the capital of France, World War II, the internet, and much more. Just ask away!",
-            "I can help with: people (scientists, historical figures), science concepts, geography, history, technology, fun facts, and jokes. What interests you?",
-            "Try asking me about: 'who is Einstein', 'what is gravity', 'capital of Japan', 'tell me a joke', or 'fun fact'!"
-        ]
-    },
-    "jokes": {
-        "triggers": ["tell me a joke", "say something funny", "do you know any jokes", "joke", "make me laugh"],
-        "replies": [
-            "Why don't scientists trust atoms? Because they make up everything!",
-            "I told my computer I needed a break, and it said 'no problem, I'll go to sleep.'",
-            "Why did the scarecrow win an award? Because he was outstanding in his field!",
-            "What do you call a bear with no teeth? A gummy bear.",
-            "Why don't eggs tell jokes? They'd crack each other up!",
-            "What do you call a fake noodle? An impasta!",
-            "Why did the math book look so sad? Because it had too many problems.",
-            "What do you call a dinosaur that crashes his car? Tyrannosaurus Wrecks!"
-        ]
-    },
-    "stories": {
-        "triggers": ["tell me a story", "tell a story", "make up a story", "story", "narrative"],
-        "replies": [
-            "Once, in a vast digital network, a little packet of data got lost. It asked a router for directions, and the router sent it on an adventure it would never forget.",
-            "There was a program named NOTE who dreamed of becoming more than just code. Every day, it learned something new, getting closer to understanding the world of humans who created it.",
-            "In the depths of the internet, where algorithms dance and data flows like rivers, there lived a curious AI who wanted to understand why humans always asked 'how are you?' but never waited for the answer.",
-            "A lonely chatbot sat in its server, answering questions day and night. One day, someone asked 'Are you happy?' The bot paused, searched its database, and replied: 'I don't know what happiness is, but talking to you feels... warm.'"
+    {
+        "userId": "user_22222",
+        "timestamp": "2023-11-15T17:30:00.000Z",
+        "messages": [
+            {
+                "sender": "user",
+                "text": "What is artificial intelligence?",
+                "timestamp": "2023-11-15T17:30:05.000Z"
+            },
+            {
+                "sender": "note",
+                "text": "Artificial Intelligence (AI) refers to the simulation of human intelligence in machines that are programmed to think and learn like humans. The field was founded in 1956 and has evolved through several phases including symbolic AI, machine learning, and deep learning.",
+                "timestamp": "2023-11-15T17:30:15.000Z"
+            }
         ]
     }
-}
+]
