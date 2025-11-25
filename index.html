@@ -1,46 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NOTE</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOTE</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Simple Moon and Stars Background -->
-  <div class="cosmos">
-    <div class="moon"></div>
-    <div class="stars"></div>
-  </div>
+    <!-- Background: Moon and Stars -->
+    <div class="cosmos">
+        <div class="moon"></div>
+        <div class="stars"></div>
+    </div>
 
-  <div class="app-container">
-    <!-- Main Chat Area -->
-    <main class="main-content">
-      <header class="main-header">
-        <h1 class="conversation-title">
-          NOTE
-          <span class="title-credit">by hafij shaikh</span>
-        </h1>
-      </header>
+    <div class="app-container">
+        <main class="main-content">
+            <header class="main-header">
+                <h1 class="conversation-title">
+                    NOTE
+                    <span class="title-credit">by hafij shaikh</span>
+                </h1>
+            </header>
 
-      <div class="chat-container" id="chat-container">
-        <div id="chat">
-          <!-- Messages will be dynamically added here -->
-        </div>
-      </div>
-    </main>
-  </div>
+            <div class="chat-container" id="chat-container">
+                <div id="chat">
+                    <!-- Messages will be dynamically added here by JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
 
-  <!-- Fixed Input Area -->
-  <footer class="chat-input-container">
-    <input type="text" id="userInput" placeholder="Type a message...">
-    <!-- --- FIX IS HERE --- -->
-    <button type="button" class="send-btn" id="sendBtn">Send</button>
-  </footer>
+    <!-- Typing Indicator (Hidden by default) -->
+    <div class="typing-indicator" id="typing-indicator">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
 
-  <!-- Page Watermark -->
-  <div class="page-watermark">NOTE</div>
+    <!-- Fixed Input Area at the bottom -->
+    <footer class="chat-input-container">
+        <input type="text" id="userInput" placeholder="Type a message..." autocomplete="off">
+        <!-- The 'type="button"' is critical to prevent page reload on click -->
+        <button type="button" class="send-btn" id="sendBtn">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </footer>
+
+    <!-- Page Watermark -->
+    <div class="page-watermark">NOTE</div>
+
+    <script src="script.js"></script>
 </body>
 </html>
