@@ -35,6 +35,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 "Albert Einstein was a German-born theoretical physicist who developed the theory of relativity. He is also famous for his mass-energy equivalence formula, E=mc²."
             ]
         },
+        'black_holes': {
+    triggers: ['what is a black hole', 'black hole', 'black holes'],
+    replies: [
+        "A black hole is a region of spacetime where gravity is so strong that nothing—not even particles or light—can escape from it.",
+        "Black holes are often formed at the end of a massive star's life cycle. The point at the center is called a singularity."
+    ]
+},
         'capital_france': {
             triggers: ['capital of france', 'what is the capital of france', 'paris'],
             replies: [
