@@ -487,3 +487,74 @@ body {
   pointer-events: none; 
   z-index: 21;
 }
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+  .message {
+    max-width: 85%;
+  }
+  
+  .wiki-content {
+    flex-direction: column;
+  }
+  
+  .wiki-image {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+  
+  .main-header {
+    padding: 15px;
+  }
+  
+  .conversation-title {
+    font-size: 1.3rem;
+  }
+  
+  .chat-input-container {
+    padding: 15px;
+  }
+  
+  .action-btn {
+    bottom: 90px;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .message {
+    max-width: 90%;
+  }
+  
+  .main-header {
+    padding: 10px;
+  }
+  
+  .conversation-title {
+    font-size: 1.2rem;
+  }
+  
+  .chat-input-container {
+    padding: 10px;
+    gap: 8px;
+  }
+  
+  .attachment-btn, .send-btn {
+    padding: 10px 15px;
+  }
+  
+  #userInput {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+  
+  .action-btn {
+    bottom: 80px;
+    width: 40px;
+    height: 40px;
+  }
+}
