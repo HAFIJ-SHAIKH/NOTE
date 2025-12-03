@@ -2,8 +2,12 @@
 
 // --- Wikipedia API Functions ---
 async function searchWikipedia(query) {
+  // Check cache first
+  const cached = getCachedData('wikipedia', query);
+  if (cached) return cached;
+  
   try {
-    // First, search for the article
+    // First, search for article
     const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*&srlimit=5`;
     const searchResponse = await fetch(searchUrl);
     const searchData = await searchResponse.json();
@@ -12,22 +16,27 @@ async function searchWikipedia(query) {
       return null;
     }
     
-    // Get the first result's page ID
+    // Get first result's page ID
     const pageId = searchData.query.search[0].pageid;
     
-    // Get the page summary and image
+    // Get page summary and image
     const summaryUrl = `https://en.wikipedia.org/w/api.php?action=query&pageids=${pageId}&prop=extracts|pageimages&exintro&explaintext&piprop=original&format=json&origin=*`;
     const summaryResponse = await fetch(summaryUrl);
     const summaryData = await summaryResponse.json();
     
     const page = summaryData.query.pages[pageId];
     
-    return {
+    const result = {
       title: page.title,
       summary: page.extract,
       image: page.original ? page.original.source : null,
       pageId: pageId
     };
+    
+    // Cache the result
+    setCachedData('wikipedia', query, result);
+    
+    return result;
   } catch (error) {
     console.error('Error fetching Wikipedia data:', error);
     return null;
@@ -36,6 +45,10 @@ async function searchWikipedia(query) {
 
 // Function to get detailed Wikipedia content
 async function getWikipediaDetails(pageId) {
+  // Check cache first
+  const cached = getCachedData('wikipedia_details', pageId);
+  if (cached) return cached;
+  
   try {
     const detailsUrl = `https://en.wikipedia.org/w/api.php?action=query&pageids=${pageId}&prop=extracts&explaintext&format=json&origin=*`;
     const detailsResponse = await fetch(detailsUrl);
@@ -44,7 +57,7 @@ async function getWikipediaDetails(pageId) {
     const page = detailsData.query.pages[pageId];
     const fullText = page.extract;
     
-    // Split the content into sections
+    // Split content into sections
     const sections = [];
     const lines = fullText.split('\n');
     let currentSection = null;
@@ -79,6 +92,9 @@ async function getWikipediaDetails(pageId) {
       sections.push(currentSection);
     }
     
+    // Cache the result
+    setCachedData('wikipedia_details', pageId, sections);
+    
     return sections;
   } catch (error) {
     console.error('Error fetching Wikipedia details:', error);
@@ -88,6 +104,10 @@ async function getWikipediaDetails(pageId) {
 
 // --- Open Library API Functions ---
 async function searchOpenLibrary(query) {
+  // Check cache first
+  const cached = getCachedData('openlibrary', query);
+  if (cached) return cached;
+  
   try {
     const searchUrl = `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=3&fields=key,title,author_name,first_publish_year,cover_i,first_sentence,subject,edition_count`;
     const response = await fetch(searchUrl);
@@ -113,6 +133,9 @@ async function searchOpenLibrary(query) {
       };
     });
     
+    // Cache the result
+    setCachedData('openlibrary', query, results);
+    
     return results;
   } catch (error) {
     console.error('Error fetching Open Library data:', error);
@@ -122,6 +145,10 @@ async function searchOpenLibrary(query) {
 
 // --- NASA API Functions ---
 async function searchNASA(query) {
+  // Check cache first
+  const cached = getCachedData('nasa', query);
+  if (cached) return cached;
+  
   try {
     // Search NASA Image and Video Library
     const searchUrl = `https://images-api.nasa.gov/search?q=${encodeURIComponent(query)}&media_type=image`;
@@ -133,7 +160,7 @@ async function searchNASA(query) {
     }
     
     const results = data.collection.items.slice(0, 3).map(item => {
-      // Get the image URL
+      // Get image URL
       let imageUrl = null;
       if (item.links && item.links.length > 0) {
         const imageLink = item.links.find(link => link.render === 'image');
@@ -142,7 +169,7 @@ async function searchNASA(query) {
         }
       }
       
-      // Get the description
+      // Get description
       let description = 'No description available.';
       if (item.data && item.data.length > 0) {
         description = item.data[0].description || description;
@@ -169,6 +196,9 @@ async function searchNASA(query) {
       };
     });
     
+    // Cache the result
+    setCachedData('nasa', query, results);
+    
     return results;
   } catch (error) {
     console.error('Error fetching NASA data:', error);
@@ -176,7 +206,7 @@ async function searchNASA(query) {
   }
 }
 
-// Combined search function
+// Combined search function with parallel execution
 async function searchAllAPIs(query) {
   const results = {
     wikipedia: null,
@@ -184,7 +214,7 @@ async function searchAllAPIs(query) {
     nasa: null
   };
   
-  // Search all APIs in parallel
+  // Search all APIs in parallel for better performance
   const [wikiData, libraryData, nasaData] = await Promise.allSettled([
     searchWikipedia(query),
     searchOpenLibrary(query),
