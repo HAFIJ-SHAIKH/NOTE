@@ -40,6 +40,7 @@ body {
   width: 100%; 
   height: 100%; 
   z-index: 0; 
+  pointer-events: none;
 }
 
 .moon {
@@ -68,6 +69,7 @@ body {
   background-size: 600px 400px; 
   opacity: 0.5; 
   animation: twinkle 10s infinite ease-in-out;
+  will-change: opacity;
 }
 
 @keyframes twinkle { 
@@ -123,7 +125,8 @@ body {
   padding-bottom: 100px; 
   background: transparent; 
   scrollbar-width: none; 
-  -ms-overflow-style: none; 
+  -ms-overflow-style: none;
+  will-change: scroll-position;
 }
 
 .chat-container::-webkit-scrollbar { 
@@ -144,6 +147,7 @@ body {
   touch-action: pan-y;
   transition: transform 0.2s ease-out;
   position: relative;
+  will-change: transform;
 }
 
 .message.note { 
@@ -220,6 +224,7 @@ body {
   max-width: 100%;
   box-shadow: 0 4px 15px var(--shadow-color);
   border-bottom-left-radius: 6px;
+  will-change: transform;
 }
 
 .wiki-header {
@@ -278,11 +283,17 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
   margin-left: 8px;
+  will-change: transform, box-shadow;
 }
 
 .wiki-btn:hover {
   background: rgba(255, 255, 255, 0.15);
   box-shadow: 0 0 10px var(--glow-color);
+  transform: scale(1.05);
+}
+
+.wiki-btn:active {
+  transform: scale(0.98);
 }
 
 .wiki-details {
@@ -342,6 +353,7 @@ body {
   width: 50px; 
   height: 25px; 
   animation: spin 3s linear infinite; 
+  will-change: transform;
 }
 
 .infinity-loader path {
@@ -380,6 +392,7 @@ body {
   z-index: 20;
   box-shadow: 0 -4px 20px var(--shadow-color); 
   transform: translateZ(0);
+  will-change: transform;
 }
 
 .attachment-btn, .send-btn {
@@ -393,6 +406,7 @@ body {
   transition: transform 0.1s, box-shadow 0.2s;
   font-weight: 500; 
   box-shadow: 0 2px 5px var(--shadow-color);
+  will-change: transform, box-shadow;
 }
 
 .attachment-btn { 
@@ -462,6 +476,7 @@ body {
   transition: all 0.2s ease; 
   box-shadow: 0 4px 15px var(--shadow-color); 
   z-index: 15;
+  will-change: transform, box-shadow;
 }
 
 .action-btn:hover {
