@@ -48,15 +48,57 @@ document.addEventListener("DOMContentLoaded", function() {
       
       const page = contentData.query.pages[pageId];
       
+      // Get detailed content for "show more" functionality
+      const detailedUrl = `https://en.wikipedia.org/w/api.php?action=query&pageids=${pageId}&prop=extracts|sections&explaintext&format=json&origin=*`;
+      const detailedResponse = await fetch(detailedUrl);
+      const detailedData = await detailedResponse.json();
+      
+      const detailedPage = detailedData.query.pages[pageId];
+      
       return {
         title: page.title,
         summary: page.extract,
         image: page.original ? page.original.source : null,
         url: `https://en.wikipedia.org/wiki/${encodeURIComponent(page.title)}`,
-        pageId: pageId
+        pageId: pageId,
+        detailedContent: detailedPage.extract,
+        sections: detailedPage.sections || []
       };
     } catch (error) {
       console.error('Error fetching Wikipedia data:', error);
+      return null;
+    }
+  }
+  
+  // --- Open Library API Functions ---
+  async function searchOpenLibrary(query) {
+    try {
+      const searchUrl = `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=3`;
+      const response = await fetch(searchUrl);
+      const data = await response.json();
+      
+      if (!data.docs || data.docs.length === 0) {
+        return null;
+      }
+      
+      const results = data.docs.map(doc => {
+        const coverId = doc.cover_i;
+        const coverUrl = coverId ? `https://covers.openlibrary.org/b/id/${coverId}-M.jpg` : null;
+        
+        return {
+          title: doc.title,
+          author: doc.author_name ? doc.author_name.join(', ') : 'Unknown Author',
+          year: doc.first_publish_year || 'Unknown',
+          cover: coverUrl,
+          key: doc.key,
+          description: doc.first_sentence ? doc.first_sentence[0] : 'No description available.',
+          subjects: doc.subject ? doc.subject.slice(0, 5) : []
+        };
+      });
+      
+      return results;
+    } catch (error) {
+      console.error('Error fetching Open Library data:', error);
       return null;
     }
   }
@@ -101,31 +143,40 @@ document.addEventListener("DOMContentLoaded", function() {
     
     const moreBtn = document.createElement('button');
     moreBtn.classList.add('wiki-btn');
-    moreBtn.textContent = 'More Details';
-    moreBtn.addEventListener('click', async () => {
+    moreBtn.textContent = 'Show More';
+    moreBtn.addEventListener('click', () => {
       if (!details.classList.contains('active')) {
-        if (!details.textContent) {
-          // Fetch more detailed content
-          showLoading();
-          try {
-            const detailedUrl = `https://en.wikipedia.org/w/api.php?action=query&pageids=${data.pageId}&prop=extracts&explaintext&format=json&origin=*`;
-            const detailedResponse = await fetch(detailedUrl);
-            const detailedData = await detailedResponse.json();
+        details.classList.add('active');
+        moreBtn.textContent = 'Show Less';
+        
+        // If details content is not yet populated, create it
+        if (details.children.length === 0) {
+          // Create bullet points from the detailed content
+          const sections = data.sections.filter(section => section.line !== 'References' && section.line !== 'See also');
+          
+          if (sections.length > 0) {
+            const pointsList = document.createElement('ul');
+            pointsList.style.paddingLeft = '20px';
+            pointsList.style.marginTop = '10px';
             
-            const pageContent = detailedData.query.pages[data.pageId];
-            details.textContent = pageContent.extract.substring(0, 1000) + '...';
-          } catch (error) {
-            details.textContent = "Error fetching more details.";
-            console.error('Error fetching detailed Wikipedia data:', error);
-          } finally {
-            hideLoading();
+            sections.forEach(section => {
+              const point = document.createElement('li');
+              point.style.marginBottom = '8px';
+              point.textContent = section.line;
+              pointsList.appendChild(point);
+            });
+            
+            details.appendChild(pointsList);
+          } else {
+            // If no sections, just add the detailed content
+            const detailsText = document.createElement('div');
+            detailsText.textContent = data.detailedContent.substring(0, 1000) + '...';
+            details.appendChild(detailsText);
           }
         }
-        details.classList.add('active');
-        moreBtn.textContent = 'Less Details';
       } else {
         details.classList.remove('active');
-        moreBtn.textContent = 'More Details';
+        moreBtn.textContent = 'Show More';
       }
     });
     
@@ -149,17 +200,166 @@ document.addEventListener("DOMContentLoaded", function() {
     chatDiv.appendChild(messageDiv);
     chatContainer.scrollTop = chatContainer.scrollHeight;
   }
+  
+  function displayOpenLibraryResults(books) {
+    if (!books || books.length === 0) return;
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', 'note');
+    
+    const libraryCard = document.createElement('div');
+    libraryCard.classList.add('wikipedia-result');
+    
+    // Header
+    const header = document.createElement('div');
+    header.classList.add('wiki-header');
+    header.innerHTML = `
+      <i class="fas fa-book wiki-icon"></i>
+      <span class="wiki-title">Open Library Results</span>
+    `;
+    libraryCard.appendChild(header);
+    
+    // Content
+    const content = document.createElement('div');
+    content.classList.add('wiki-content');
+    content.style.flexDirection = 'column';
+    
+    books.forEach((book, index) => {
+      const bookItem = document.createElement('div');
+      bookItem.style.display = 'flex';
+      bookItem.style.marginBottom = '15px';
+      bookItem.style.paddingBottom = '15px';
+      bookItem.style.borderBottom = index < books.length - 1 ? '1px solid rgba(255, 255, 255, 0.1)' : 'none';
+      
+      if (book.cover) {
+        const bookCover = document.createElement('img');
+        bookCover.src = book.cover;
+        bookCover.style.width = '80px';
+        bookCover.style.height = '120px';
+        bookCover.style.objectFit = 'cover';
+        bookCover.style.borderRadius = '5px';
+        bookCover.style.marginRight = '15px';
+        bookItem.appendChild(bookCover);
+      }
+      
+      const bookInfo = document.createElement('div');
+      bookInfo.style.flex = '1';
+      
+      const bookTitle = document.createElement('div');
+      bookTitle.style.fontWeight = '600';
+      bookTitle.style.marginBottom = '5px';
+      bookTitle.textContent = book.title;
+      bookInfo.appendChild(bookTitle);
+      
+      const bookAuthor = document.createElement('div');
+      bookAuthor.style.fontSize = '0.9rem';
+      bookAuthor.style.color = 'var(--text-secondary)';
+      bookAuthor.style.marginBottom = '5px';
+      bookAuthor.textContent = `By: ${book.author} (${book.year})`;
+      bookInfo.appendChild(bookAuthor);
+      
+      const bookDesc = document.createElement('div');
+      bookDesc.style.fontSize = '0.85rem';
+      bookDesc.style.marginBottom = '5px';
+      bookDesc.textContent = book.description;
+      bookInfo.appendChild(bookDesc);
+      
+      const moreBtn = document.createElement('button');
+      moreBtn.classList.add('wiki-btn');
+      moreBtn.style.fontSize = '0.75rem';
+      moreBtn.style.padding = '3px 8px';
+      moreBtn.textContent = 'More Details';
+      moreBtn.addEventListener('click', () => {
+        window.open(`https://openlibrary.org${book.key}`, '_blank');
+      });
+      bookInfo.appendChild(moreBtn);
+      
+      bookItem.appendChild(bookInfo);
+      content.appendChild(bookItem);
+    });
+    
+    libraryCard.appendChild(content);
+    messageDiv.appendChild(libraryCard);
+    
+    // Add timestamp
+    const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const timestampSpan = document.createElement('span'); 
+    timestampSpan.classList.add('timestamp'); 
+    timestampSpan.textContent = timestamp;
+    messageDiv.appendChild(timestampSpan);
+    
+    chatDiv.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
 
-  // --- OCR Function ---
+  // --- Enhanced OCR Function ---
   async function performOCR(imageFile) {
     try {
+      // Create a canvas to preprocess the image
+      const img = new Image();
+      img.src = URL.createObjectURL(imageFile);
+      
+      await new Promise((resolve) => {
+        img.onload = resolve;
+      });
+      
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Set canvas dimensions to match the image
+      canvas.width = img.width;
+      canvas.height = img.height;
+      
+      // Draw the image on the canvas
+      ctx.drawImage(img, 0, 0);
+      
+      // Get image data for preprocessing
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      
+      // Apply grayscale and contrast enhancement
+      for (let i = 0; i < data.length; i += 4) {
+        const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+        const contrast = 1.5;
+        const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+        const adjusted = factor * (gray - 128) + 128;
+        
+        data[i] = adjusted;     // Red
+        data[i + 1] = adjusted; // Green
+        data[i + 2] = adjusted; // Blue
+        // Alpha channel (data[i + 3]) remains unchanged
+      }
+      
+      // Put the processed image data back
+      ctx.putImageData(imageData, 0, 0);
+      
+      // Convert canvas to blob for OCR
+      canvas.toBlob(async (blob) => {
+        // Use Tesseract with enhanced configuration
+        const result = await Tesseract.recognize(
+          blob,
+          'eng',
+          {
+            logger: m => console.log(m),
+            tessedit_pageseg_mode: Tesseract.PSM.AUTO,
+            tessedit_char_whitelist: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,!?;:()[]{}\'"-@#$%^&*+=<>/\\|`~ '
+          }
+        );
+        
+        return result.data.text.trim();
+      }, 'image/jpeg', 0.95);
+      
+      // Fallback to direct file processing if canvas processing fails
       const result = await Tesseract.recognize(
         imageFile,
         'eng',
         {
-          logger: m => console.log(m)
+          logger: m => console.log(m),
+          tessedit_pageseg_mode: Tesseract.PSM.AUTO,
+          tessedit_char_whitelist: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,!?;:()[]{}\'"-@#$%^&*+=<>/\\|`~ '
         }
       );
+      
       return result.data.text.trim();
     } catch (error) {
       console.error('OCR Error:', error);
@@ -194,6 +394,8 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // Perform OCR
         showLoading();
+        addMessage("Processing image and extracting text...", "note");
+        
         const extractedText = await performOCR(file);
         
         if (extractedText && extractedText.length > 0) {
@@ -207,8 +409,26 @@ document.addEventListener("DOMContentLoaded", function() {
           
           if (wikiData) {
             displayWikipediaResult(wikiData);
+            
+            // Also search Open Library
+            showLoading();
+            const libraryData = await searchOpenLibrary(extractedText);
+            hideLoading();
+            
+            if (libraryData) {
+              displayOpenLibraryResults(libraryData);
+            }
           } else {
-            addMessage(`No Wikipedia results found for the extracted text.`, "note");
+            // Try searching Open Library if Wikipedia fails
+            showLoading();
+            const libraryData = await searchOpenLibrary(extractedText);
+            hideLoading();
+            
+            if (libraryData) {
+              displayOpenLibraryResults(libraryData);
+            } else {
+              addMessage(`No results found for the extracted text.`, "note");
+            }
           }
         } else {
           hideLoading();
@@ -262,11 +482,23 @@ document.addEventListener("DOMContentLoaded", function() {
     const infoKeywords = [
       'what is', 'who is', 'where is', 'when did', 'why did', 'how does', 
       'tell me about', 'explain', 'define', 'information about', 'details about',
-      'history of', 'meaning of', 'describe', 'search for', 'find information'
+      'history of', 'meaning of', 'describe', 'search for', 'find information',
+      'book about', 'books on', 'read about', 'learn about', 'find book'
     ];
     
     const lowerMessage = message.toLowerCase();
     return infoKeywords.some(keyword => lowerMessage.includes(keyword));
+  }
+  
+  // Check if message is asking for book information
+  function isBookRequest(message) {
+    const bookKeywords = [
+      'book about', 'books on', 'read about', 'find book', 'recommend book',
+      'author', 'novel', 'publication', 'literature', 'reading'
+    ];
+    
+    const lowerMessage = message.toLowerCase();
+    return bookKeywords.some(keyword => lowerMessage.includes(keyword));
   }
   
   // Extract search term from message
@@ -275,7 +507,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let searchTerm = message.toLowerCase();
     
     // Remove question words
-    searchTerm = searchTerm.replace(/^(what is|who is|where is|when did|why did|how does|tell me about|explain|define|information about|details about|history of|meaning of|describe|search for|find information)\s+/i, '');
+    searchTerm = searchTerm.replace(/^(what is|who is|where is|when did|why did|how does|tell me about|explain|define|information about|details about|history of|meaning of|describe|search for|find information|book about|books on|read about|learn about|find book|recommend book)\s+/i, '');
     
     // Remove question marks and other punctuation
     searchTerm = searchTerm.replace(/[?.!;:,]+$/, '');
@@ -295,25 +527,36 @@ document.addEventListener("DOMContentLoaded", function() {
         const searchTerm = extractSearchTerm(messageText);
         
         try {
+          // Search Wikipedia
           const wikiData = await searchWikipedia(searchTerm);
+          
+          // Search Open Library
+          const libraryData = await searchOpenLibrary(searchTerm);
+          
           hideLoading();
           
           if (wikiData) {
             displayWikipediaResult(wikiData);
-          } else {
-            addMessage(`I couldn't find information about "${searchTerm}" on Wikipedia. Could you try a different search term?`, "note");
+          }
+          
+          if (libraryData) {
+            displayOpenLibraryResults(libraryData);
+          }
+          
+      if (!wikiData && !libraryData) {
+            addMessage(`I couldn't find information about "${searchTerm}". Could you try a different search term?`, "note");
           }
         } catch (error) {
           hideLoading();
           addMessage("Sorry, I encountered an error while searching for information. Please try again later.", "note");
-          console.error('Wikipedia search error:', error);
+          console.error('Search error:', error);
         }
       } else {
         // Regular chat response
         showLoading();
         setTimeout(() => {
           hideLoading();
-          const response = "That's an interesting point! If you're looking for information, try asking questions like 'What is [topic]?' or 'Tell me about [topic]'.";
+          const response = "That's an interesting point! If you're looking for information, try asking questions like 'What is [topic]?' or 'Tell me about [topic]'. You can also upload an image with text to search for information.";
           addMessage(response, "note");
         }, 1500);
       }
