@@ -3,7 +3,7 @@
 // Enhanced OCR function with image preprocessing
 async function performOCR(imageFile) {
   try {
-    // Create a canvas to preprocess the image
+    // Create a canvas to preprocess image
     const img = new Image();
     img.src = URL.createObjectURL(imageFile);
     
@@ -14,11 +14,11 @@ async function performOCR(imageFile) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     
-    // Set canvas dimensions to match the image
+    // Set canvas dimensions to match image
     canvas.width = img.width;
     canvas.height = img.height;
     
-    // Draw the image on the canvas
+    // Draw image on canvas
     ctx.drawImage(img, 0, 0);
     
     // Get image data for preprocessing
@@ -42,33 +42,27 @@ async function performOCR(imageFile) {
     ctx.putImageData(imageData, 0, 0);
     
     // Convert canvas to blob for OCR
-    canvas.toBlob(async (blob) => {
-      // Use Tesseract with enhanced configuration
-      const result = await Tesseract.recognize(
-        blob,
-        'eng',
-        {
-          logger: m => console.log(m),
-          tessedit_pageseg_mode: Tesseract.PSM.AUTO,
-          tessedit_char_whitelist: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,!?;:()[]{}\'"-@#$%^&*+=<>/\\|`~ '
+    return new Promise((resolve) => {
+      canvas.toBlob(async (blob) => {
+        try {
+          // Use Tesseract with enhanced configuration
+          const result = await Tesseract.recognize(
+            blob,
+            'eng',
+            {
+              logger: m => console.log(m),
+              tessedit_pageseg_mode: Tesseract.PSM.AUTO,
+              tessedit_char_whitelist: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,!?;:()[]{}\'"-@#$%^&*+=<>/\\|`~ '
+            }
+          );
+          
+          resolve(result.data.text.trim());
+        } catch (error) {
+          console.error('OCR Error:', error);
+          resolve(null);
         }
-      );
-      
-      return result.data.text.trim();
-    }, 'image/jpeg', 0.95);
-    
-    // Fallback to direct file processing if canvas processing fails
-    const result = await Tesseract.recognize(
-      imageFile,
-      'eng',
-      {
-        logger: m => console.log(m),
-        tessedit_pageseg_mode: Tesseract.PSM.AUTO,
-        tessedit_char_whitelist: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,!?;:()[]{}\'"-@#$%^&*+=<>/\\|`~ '
-      }
-    );
-    
-    return result.data.text.trim();
+      }, 'image/jpeg', 0.95);
+    });
   } catch (error) {
     console.error('OCR Error:', error);
     return null;
