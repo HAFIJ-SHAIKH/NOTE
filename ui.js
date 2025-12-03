@@ -38,7 +38,11 @@ function addMessage(text, sender, chatDiv, chatContainer) {
   messageDiv.appendChild(timestampSpan); 
   
   chatDiv.appendChild(messageDiv);
-  chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+  
+  // Use requestAnimationFrame for smoother scrolling
+  requestAnimationFrame(() => {
+    chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+  });
   
   return messageDiv;
 }
@@ -105,12 +109,12 @@ function displayWikipediaResult(data, chatDiv, chatContainer) {
             const point = document.createElement('li');
             point.style.marginBottom = '8px';
             
-            // Create a title for the section
+            // Create a title for section
             const title = document.createElement('strong');
             title.textContent = section.title + ': ';
             point.appendChild(title);
             
-            // Add the content
+            // Add content
             const content = document.createElement('span');
             content.textContent = section.content.slice(0, 2).join(' ');
             if (section.content.length > 2) {
@@ -153,7 +157,11 @@ function displayWikipediaResult(data, chatDiv, chatContainer) {
   messageDiv.appendChild(timestampSpan);
   
   chatDiv.appendChild(messageDiv);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+  
+  // Use requestAnimationFrame for smoother scrolling
+  requestAnimationFrame(() => {
+    chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+  });
 }
 
 function displayOpenLibraryResults(books, chatDiv, chatContainer) {
@@ -267,7 +275,11 @@ function displayOpenLibraryResults(books, chatDiv, chatContainer) {
   messageDiv.appendChild(timestampSpan);
   
   chatDiv.appendChild(messageDiv);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+  
+  // Use requestAnimationFrame for smoother scrolling
+  requestAnimationFrame(() => {
+    chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+  });
 }
 
 function displayNASAResults(results, chatDiv, chatContainer) {
@@ -360,7 +372,11 @@ function displayNASAResults(results, chatDiv, chatContainer) {
   messageDiv.appendChild(timestampSpan);
   
   chatDiv.appendChild(messageDiv);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+  
+  // Use requestAnimationFrame for smoother scrolling
+  requestAnimationFrame(() => {
+    chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+  });
 }
 
 // --- Image Display Function ---
@@ -377,5 +393,9 @@ function displayUserImage(imageSrc, chatDiv, chatContainer) {
   messageDiv.appendChild(imageElement); 
   messageDiv.appendChild(timestampSpan); 
   chatDiv.appendChild(messageDiv); 
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-            }
+  
+  // Use requestAnimationFrame for smoother scrolling
+  requestAnimationFrame(() => {
+    chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+  });
+              }
