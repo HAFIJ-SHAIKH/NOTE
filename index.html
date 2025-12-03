@@ -1,57 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOTE</title>
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOTE - Cosmic Midnight</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Background: Moon and Stars -->
-    <div class="cosmos">
-        <div class="moon"></div>
-        <div class="stars"></div>
-    </div>
+  <!-- Simple Moon and Stars Background -->
+  <div class="cosmos">
+    <div class="moon"></div>
+    <div class="stars"></div>
+  </div>
 
-    <div class="app-container">
-        <main class="main-content">
-            <header class="main-header">
-                <h1 class="conversation-title">
-                    NOTE
-                    <span class="title-credit">by hafij shaikh</span>
-                </h1>
-            </header>
+  <div class="app-container">
+    <!-- Main Chat Area -->
+    <main class="main-content">
+      <header class="main-header">
+        <h1 class="conversation-title">
+          NOTE
+          <span class="title-credit">by hafij shaikh</span>
+        </h1>
+      </header>
 
-            <div class="chat-container" id="chat-container">
-                <div id="chat">
-                    <!-- Messages will be dynamically added here by JavaScript -->
-                </div>
-            </div>
-        </main>
-    </div>
+      <div class="chat-container" id="chat-container">
+        <div id="chat">
+          <!-- Sample messages -->
+          <div class="message note">
+            <div class="message-bubble">Hello! I can help you with information. You can ask me questions or upload images for text recognition and Wikipedia search.</div>
+            <span class="timestamp">10:30 PM</span>
+          </div>
+          <div class="message user">
+            <div class="message-bubble">How does this work?</div>
+            <span class="timestamp">10:31 PM</span>
+          </div>
+          <div class="message note">
+            <div class="message-bubble">Simply type a question or upload an image. I'll search Wikipedia for relevant information or extract text from images and search for that.</div>
+            <span class="timestamp">10:31 PM</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
 
-    <!-- Typing Indicator (Hidden by default) -->
-    <div class="typing-indicator" id="typing-indicator">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
+  <!-- Fixed Input Area -->
+  <footer class="chat-input-container">
+    <button class="attachment-btn" id="uploadBtn"><i class="fas fa-paperclip"></i></button>
+    <input type="file" id="fileInput" accept="image/*" style="display:none">
+    <input type="text" id="userInput" placeholder="Type a message...">
+    <button class="send-btn" id="sendBtn">Send</button>
+  </footer>
 
-    <!-- Fixed Input Area at the bottom -->
-    <footer class="chat-input-container">
-        <input type="text" id="userInput" placeholder="Type a message..." autocomplete="off">
-        <!-- The 'type="button"' is critical to prevent page reload on click -->
-        <button type="button" class="send-btn" id="sendBtn">
-            <i class="fas fa-paper-plane"></i>
-        </button>
-    </footer>
+  <!-- Scroll to Bottom Button -->
+  <button class="action-btn scroll-to-bottom-btn" id="scrollToBottomBtn" title="Scroll to Bottom">
+    <i class="fas fa-chevron-down"></i>
+  </button>
 
-    <!-- Page Watermark -->
-    <div class="page-watermark">NOTE</div>
+  <!-- Page Watermark -->
+  <div class="page-watermark">note.infinity-Ⅰ</div>
 
-    <script src="script.js"></script>
+  <!-- Include Tesseract.js for OCR -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+  <!-- Include Math.js for advanced calculations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+  
+  <script src="script.js"></script>
 </body>
 </html>
