@@ -1,4 +1,4 @@
-// Utility functions for the application
+// Utility functions for application
 
 // Extract search term from message
 function extractSearchTerm(message) {
@@ -104,3 +104,42 @@ async function safeAPICall(apiFunction, errorMessage = 'API call failed') {
     return null;
   }
 }
+
+// Performance optimization: throttle function
+function throttle(func, limit) {
+  let inThrottle;
+  return function() {
+    const args = arguments;
+    const context = this;
+    if (!inThrottle) {
+      func.apply(context, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  }
+}
+
+// Cache for API responses
+const apiCache = new Map();
+
+// Cache management
+function getCacheKey(api, query) {
+  return `${api}:${query}`;
+}
+
+function getCachedData(api, query) {
+  const key = getCacheKey(api, query);
+  const cached = apiCache.get(key);
+  if (cached && Date.now() - cached.timestamp < 300000) { // 5 minutes cache
+    return cached.data;
+  }
+  return null;
+}
+
+function setCachedData(api, query, data) {
+  const key = getCacheKey(api, query);
+  apiCache.set(key, {
+    data: data,
+    timestamp: Date.now()
+  });
+                      }
