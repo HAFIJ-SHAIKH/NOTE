@@ -129,15 +129,7 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
     
-    const linkBtn = document.createElement('button');
-    linkBtn.classList.add('wiki-btn');
-    linkBtn.textContent = 'Open in Wikipedia';
-    linkBtn.addEventListener('click', () => {
-      window.open(data.url, '_blank');
-    });
-    
     actions.appendChild(moreBtn);
-    actions.appendChild(linkBtn);
     wikiCard.appendChild(actions);
     
     // Details section (initially hidden)
