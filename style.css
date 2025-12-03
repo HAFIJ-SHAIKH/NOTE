@@ -299,6 +299,15 @@ body {
   display: block;
 }
 
+.wiki-details ul {
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+.wiki-details li {
+  margin-bottom: 8px;
+}
+
 /* --- Highlight for Important Assistant Messages --- */
 .message.note.assistant-highlight {
   border: 1px solid var(--accent);
