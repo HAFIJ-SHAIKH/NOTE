@@ -235,23 +235,29 @@
         const bubbleDiv = document.createElement('div'); 
         bubbleDiv.classList.add('message-bubble');
         
-        // Check for image in the response
-        const imageMatch = text.match(/🖼️ \*\*Image:\*\* (https?:\/\/[^\s]+)/);
+        // Handle markdown images: ![alt](url)
+        const imageRegex = /!\[.*?\]\((https?:\/\/[^\)]+)\)/g;
+        let images = [];
+        let match;
         
-        if (imageMatch) {
-          const cleanText = text.replace(/🖼️ \*\*Image:\*\* https?:\/\/[^\s]+/, '').trim();
-          bubbleDiv.textContent = cleanText;
-          
+        while ((match = imageRegex.exec(text)) !== null) {
+          images.push(match[1]);
+        }
+        
+        // Remove markdown image syntax from text
+        const cleanText = text.replace(imageRegex, '').trim();
+        bubbleDiv.textContent = cleanText;
+        
+        // Add images
+        images.forEach(imageUrl => {
           const img = document.createElement('img');
-          img.src = imageMatch[1];
+          img.src = imageUrl;
           img.classList.add('message-image');
           img.alt = 'Image';
           img.loading = 'lazy';
           img.onerror = function() { this.style.display = 'none'; };
           bubbleDiv.appendChild(img);
-        } else {
-          bubbleDiv.textContent = text;
-        }
+        });
         
         const timestamp = getCurrentTimestamp();
         const timestampSpan = document.createElement('span'); 
@@ -271,13 +277,11 @@
         
         isTyping = true;
         const typingDiv = document.createElement('div'); 
-        typingDiv.classList.add('message', 'assistant', 'typing-indicator-wrapper');
+        typingDiv.classList.add('message', 'assistant', 'typing-indicator');
         typingDiv.innerHTML = `
-          <div class="typing-indicator">
-            <svg class="infinity-loader" viewBox="0 0 100 40">
-              <path d="M20,20 Q30,5 40,20 T60,20 T80,20" />
-            </svg>
-          </div>
+          <svg class="infinity-loader" viewBox="0 0 100 40">
+            <path d="M20,20 Q30,5 40,20 T60,20 T80,20" />
+          </svg>
         `;
         chatDiv.appendChild(typingDiv);
         scrollToBottom();
@@ -306,7 +310,7 @@
         return !str || str.trim().length === 0;
       }
 
-      // Note API integration
+      // Note API integration (FIXED!)
       async function callNoteAPI(message) {
         try {
           const response = await fetch(NOTE_API_URL, {
@@ -315,15 +319,22 @@
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${NOTE_API_KEY}`
             },
-            body: JSON.stringify({ message: message })
+            body: JSON.stringify({ 
+              message: message,
+              show_stats: false
+            })
           });
 
           if (!response.ok) {
-            throw new Error(`API Error: ${response.status} ${response.statusText}`);
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(`API Error: ${response.status} - ${errorData.detail || response.statusText}`);
           }
 
           const data = await response.json();
-          return data.reply || data.response || "I'm sorry, I couldn't process that request.";
+          
+          // Note API returns 'response' field (not 'reply')
+          return data.response || "I'm sorry, I couldn't process that request.";
+          
         } catch (error) {
           console.error('Note API Error:', error);
           throw error;
