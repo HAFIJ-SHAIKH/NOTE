@@ -92,50 +92,40 @@
     .message.assistant .timestamp { justify-content: flex-start; }
     .message.user .timestamp { justify-content: flex-end; }
 
-    /* Infinity Loader Animation */
-    .infinity-loader {
-      display: inline-block;
-      position: relative;
-      width: 80px;
-      height: 40px;
-    }
-
-    .infinity-loader::before,
-    .infinity-loader::after {
-      content: '∞';
-      position: absolute;
-      font-size: 32px;
-      color: var(--accent);
-      animation: infinitySpin 2s infinite ease-in-out;
-    }
-
-    .infinity-loader::before {
-      left: 0;
-      animation-delay: 0s;
-    }
-
-    .infinity-loader::after {
-      left: 30px;
-      opacity: 0.5;
-      animation-delay: -1s;
-    }
-
-    @keyframes infinitySpin {
-      0%, 100% {
-        transform: rotate(0deg) scale(1);
-        opacity: 1;
-      }
-      50% {
-        transform: rotate(180deg) scale(1.2);
-        opacity: 0.7;
-      }
-    }
-
+    /* ORIGINAL 3 DOTS LOADER (From your code) */
     .typing-indicator {
-      display: flex; align-items: center; justify-content: center; gap: 15px; padding: 15px 20px;
+      display: flex; align-items: center; gap: 10px; padding: 15px 20px;
       background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--glass-border); border-radius: 20px; border-bottom-left-radius: 6px;
-      box-shadow: 0 4px 15px var(--shadow-color); max-width: 150px; align-self: flex-start;
+      box-shadow: 0 4px 15px var(--shadow-color); max-width: 70%; align-self: flex-start;
+    }
+
+    .typing-dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent);
+      border-radius: 50%;
+      animation: typing 1.4s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(1) { animation-delay: 0s; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing {
+      0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.5;
+      }
+      30% {
+        transform: translateY(-10px);
+        opacity: 1;
+      }
     }
 
     .chat-input-container {
@@ -215,14 +205,16 @@
           <div class="message assistant">
             <div class="message-bubble">Hello! I'm Note, your free cosmic assistant! 🌙
 
-Try me:
+I have 150+ conversation patterns!
+
+Try:
 • 'How are you?'
-• 'Tell me a joke'
-• 'What is the Taj Mahal?'
-• 'What's 25 * 8?'
+• 'I'm stressed' 
+• 'Tell me a riddle'
+• 'What is gravity?'
 • 'What time is it in India?'
 
-I chat naturally with varied responses!</div>
+I chat naturally with you!</div>
             <span class="timestamp">Just now</span>
           </div>
         </div>
@@ -289,25 +281,30 @@ I chat naturally with varied responses!</div>
         return messageDiv;
       }
 
-      function showInfinityLoader() {
+      function showTypingIndicator() {
         if (isTyping) return null;
-        isTyping = true;
         
-        const loaderDiv = document.createElement('div'); 
-        loaderDiv.classList.add('message', 'assistant', 'typing-indicator-wrapper');
-        loaderDiv.innerHTML = `
+        isTyping = true;
+        const typingDiv = document.createElement('div'); 
+        typingDiv.classList.add('message', 'assistant', 'typing-indicator-wrapper');
+        typingDiv.innerHTML = `
           <div class="typing-indicator">
-            <div class="infinity-loader"></div>
+            <div class="typing-dots">
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+            </div>
           </div>
         `;
-        chatDiv.appendChild(loaderDiv);
+        chatDiv.appendChild(typingDiv);
         scrollToBottom();
-        return loaderDiv;
+        
+        return typingDiv;
       }
 
-      function hideInfinityLoader(loaderDiv) {
-        if (loaderDiv && loaderDiv.parentNode) {
-          loaderDiv.remove();
+      function hideTypingIndicator(typingDiv) {
+        if (typingDiv && typingDiv.parentNode) {
+          typingDiv.remove();
         }
         isTyping = false;
       }
@@ -359,14 +356,14 @@ I chat naturally with varied responses!</div>
         addMessage(messageText, "user");
         userInput.value = '';
         
-        const infinityLoader = showInfinityLoader();
+        const typingIndicator = showTypingIndicator();
         
         try {
           const response = await callNoteAPI(messageText);
-          hideInfinityLoader(infinityLoader);
+          hideTypingIndicator(typingIndicator);
           addMessage(response, "assistant");
         } catch (error) {
-          hideInfinityLoader(infinityLoader);
+          hideTypingIndicator(typingIndicator);
           addMessage("Sorry, I encountered an error. Please try again!", "assistant");
         } finally {
           userInput.disabled = false;
