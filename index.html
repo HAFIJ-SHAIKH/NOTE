@@ -92,56 +92,50 @@
     .message.assistant .timestamp { justify-content: flex-start; }
     .message.user .timestamp { justify-content: flex-end; }
 
-    /* Infinity Loader */
+    /* Infinity Loader Animation */
     .infinity-loader {
       display: inline-block;
       position: relative;
-      width: 60px;
-      height: 30px;
+      width: 80px;
+      height: 40px;
     }
 
     .infinity-loader::before,
     .infinity-loader::after {
-      content: '';
+      content: '∞';
       position: absolute;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      border: 3px solid var(--accent);
-      animation: infinity 2s infinite ease-in-out;
+      font-size: 32px;
+      color: var(--accent);
+      animation: infinitySpin 2s infinite ease-in-out;
     }
 
     .infinity-loader::before {
       left: 0;
-      border-color: var(--accent) transparent transparent transparent;
+      animation-delay: 0s;
     }
 
     .infinity-loader::after {
-      right: 0;
-      border-color: transparent transparent var(--accent) transparent;
+      left: 30px;
+      opacity: 0.5;
       animation-delay: -1s;
     }
 
-    @keyframes infinity {
+    @keyframes infinitySpin {
       0%, 100% {
-        transform: translateX(0) rotate(0);
-      }
-      25% {
-        transform: translateX(15px) rotate(90deg);
+        transform: rotate(0deg) scale(1);
+        opacity: 1;
       }
       50% {
-        transform: translateX(0) rotate(180deg);
-      }
-      75% {
-        transform: translateX(-15px) rotate(270deg);
+        transform: rotate(180deg) scale(1.2);
+        opacity: 0.7;
       }
     }
 
     .typing-indicator {
-      display: flex; align-items: center; gap: 15px; padding: 15px 20px;
+      display: flex; align-items: center; justify-content: center; gap: 15px; padding: 15px 20px;
       background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--glass-border); border-radius: 20px; border-bottom-left-radius: 6px;
-      box-shadow: 0 4px 15px var(--shadow-color); max-width: 70%; align-self: flex-start;
+      box-shadow: 0 4px 15px var(--shadow-color); max-width: 150px; align-self: flex-start;
     }
 
     .chat-input-container {
@@ -219,16 +213,16 @@
       <div class="chat-container" id="chat-container">
         <div id="chat">
           <div class="message assistant">
-            <div class="message-bubble">Namaste! 🌙 I'm Note, your free cosmic assistant!
+            <div class="message-bubble">Hello! I'm Note, your free cosmic assistant! 🌙
 
-I have 100+ conversation patterns and can chat naturally!
-
-Try asking:
+Try me:
 • 'How are you?'
 • 'Tell me a joke'
 • 'What is the Taj Mahal?'
 • 'What's 25 * 8?'
-• 'What time is it in India?'</div>
+• 'What time is it in India?'
+
+I chat naturally with varied responses!</div>
             <span class="timestamp">Just now</span>
           </div>
         </div>
@@ -237,7 +231,7 @@ Try asking:
   </div>
 
   <footer class="chat-input-container">
-    <input type="text" id="userInput" placeholder="Type a message...">
+    <input type="text" id="userInput" placeholder="Type a message..." autocomplete="off">
     <button class="send-btn" id="sendBtn">Send</button>
   </footer>
 
@@ -265,20 +259,18 @@ Try asking:
         const bubbleDiv = document.createElement('div'); 
         bubbleDiv.classList.add('message-bubble');
         
-        // Check if response contains image URL
         const imageMatch = text.match(/🖼️ \*\*Image:\*\* (https?:\/\/[^\s]+)/);
         
         if (imageMatch) {
-          // Remove image URL from text
           const cleanText = text.replace(/🖼️ \*\*Image:\*\* https?:\/\/[^\s]+/, '').trim();
           bubbleDiv.textContent = cleanText;
           
-          // Add image below text
           const img = document.createElement('img');
           img.src = imageMatch[1];
           img.classList.add('message-image');
           img.alt = 'Wikipedia Image';
-          img.onerror = function() { this.style.display = 'none'; }; // Hide if image fails to load
+          img.loading = 'lazy';
+          img.onerror = function() { this.style.display = 'none'; };
           bubbleDiv.appendChild(img);
         } else {
           bubbleDiv.textContent = text;
@@ -346,7 +338,7 @@ Try asking:
           });
 
           if (!response.ok) {
-            throw new Error(`API Error: ${response.status} ${response.statusText}`);
+            throw new Error(`API Error: ${response.status}`);
           }
 
           const data = await response.json();
@@ -375,7 +367,7 @@ Try asking:
           addMessage(response, "assistant");
         } catch (error) {
           hideInfinityLoader(infinityLoader);
-          addMessage("Sorry, I encountered an error. Please check your connection and try again!", "assistant");
+          addMessage("Sorry, I encountered an error. Please try again!", "assistant");
         } finally {
           userInput.disabled = false;
           sendBtn.disabled = false;
