@@ -92,7 +92,7 @@
     .message.assistant .timestamp { justify-content: flex-start; }
     .message.user .timestamp { justify-content: flex-end; }
 
-    /* INFINITY LOADER */
+    /* INFINITY LOADER - SMALLER SIZE */
     .typing-indicator {
       display: flex; align-items: center; gap: 10px; padding: 15px 20px;
       background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -101,8 +101,8 @@
     }
 
     .infinity-loader { 
-      width: 50px; 
-      height: 25px; 
+      width: 35px;  /* Reduced from 50px */
+      height: 18px;  /* Reduced from 25px */
       animation: spin 3s linear infinite; 
     }
 
@@ -215,8 +215,8 @@
   </button>
 
   <script>
-    // Note API Configuration
-    const NOTE_API_KEY = 'cwk-04010b2d131a096d1858660dfb5498a50a7356996226fcb1275deddd4f994885';
+    // ⚠️ REPLACE WITH YOUR API KEY from: https://codewords.agemo.ai/account/keys
+    const NOTE_API_KEY = 'YOUR_API_KEY_HERE';
     const NOTE_API_URL = 'https://runtime.codewords.ai/run/note_chatbot_b9e8f37e';
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -327,12 +327,13 @@
 
           if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
+            console.error('API Error:', response.status, errorData);
             throw new Error(`API Error: ${response.status} - ${errorData.detail || response.statusText}`);
           }
 
           const data = await response.json();
           
-          // Note API returns 'response' field (not 'reply')
+          // Note returns 'response' field
           return data.response || "I'm sorry, I couldn't process that request.";
           
         } catch (error) {
@@ -370,7 +371,7 @@
           hideTypingIndicator(typingIndicator);
           
           // Show error message
-          addMessage("Sorry, I encountered an error. Please try again!", "assistant");
+          addMessage("Sorry, I encountered an error. Please check the console and your API key!", "assistant");
         } finally {
           // Re-enable input
           userInput.disabled = false;
