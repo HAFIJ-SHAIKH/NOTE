@@ -92,7 +92,7 @@
     .message.assistant .timestamp { justify-content: flex-start; }
     .message.user .timestamp { justify-content: flex-end; }
 
-    /* ORIGINAL 3 DOTS LOADER (From your code) */
+    /* INFINITY LOADER */
     .typing-indicator {
       display: flex; align-items: center; gap: 10px; padding: 15px 20px;
       background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -100,32 +100,29 @@
       box-shadow: 0 4px 15px var(--shadow-color); max-width: 70%; align-self: flex-start;
     }
 
-    .typing-dots {
-      display: flex;
-      gap: 4px;
+    .infinity-loader { 
+      width: 50px; 
+      height: 25px; 
+      animation: spin 3s linear infinite; 
     }
 
-    .typing-dot {
-      width: 8px;
-      height: 8px;
-      background-color: var(--accent);
-      border-radius: 50%;
-      animation: typing 1.4s infinite ease-in-out;
+    .infinity-loader path {
+      stroke: var(--accent); 
+      stroke-width: 2.5; 
+      fill: none; 
+      stroke-linecap: round;
+      filter: drop-shadow(0 0 5px var(--glow-color)); 
+      animation: pulse-glow 2s ease-in-out infinite;
     }
 
-    .typing-dot:nth-child(1) { animation-delay: 0s; }
-    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes spin { 
+      from { transform: rotate(0deg); } 
+      to { transform: rotate(360deg); } 
+    }
 
-    @keyframes typing {
-      0%, 60%, 100% {
-        transform: translateY(0);
-        opacity: 0.5;
-      }
-      30% {
-        transform: translateY(-10px);
-        opacity: 1;
-      }
+    @keyframes pulse-glow { 
+      0%, 100% { opacity: 0.8; } 
+      50% { opacity: 1; } 
     }
 
     .chat-input-container {
@@ -202,21 +199,7 @@
 
       <div class="chat-container" id="chat-container">
         <div id="chat">
-          <div class="message assistant">
-            <div class="message-bubble">Hello! I'm Note, your free cosmic assistant! 🌙
-
-I have 150+ conversation patterns!
-
-Try:
-• 'How are you?'
-• 'I'm stressed' 
-• 'Tell me a riddle'
-• 'What is gravity?'
-• 'What time is it in India?'
-
-I chat naturally with you!</div>
-            <span class="timestamp">Just now</span>
-          </div>
+          <!-- Chat messages will appear here -->
         </div>
       </div>
     </main>
@@ -232,8 +215,9 @@ I chat naturally with you!</div>
   </button>
 
   <script>
+    // Note API Configuration
     const NOTE_API_KEY = 'cwk-04010b2d131a096d1858660dfb5498a50a7356996226fcb1275deddd4f994885';
-    const NOTE_API_URL = 'https://runtime.codewords.ai/run/note_1a4b278e';
+    const NOTE_API_URL = 'https://runtime.codewords.ai/run/note_chatbot_b9e8f37e';
 
     document.addEventListener("DOMContentLoaded", function() {
       const chatContainer = document.getElementById("chat-container");
@@ -251,6 +235,7 @@ I chat naturally with you!</div>
         const bubbleDiv = document.createElement('div'); 
         bubbleDiv.classList.add('message-bubble');
         
+        // Check for image in the response
         const imageMatch = text.match(/🖼️ \*\*Image:\*\* (https?:\/\/[^\s]+)/);
         
         if (imageMatch) {
@@ -260,7 +245,7 @@ I chat naturally with you!</div>
           const img = document.createElement('img');
           img.src = imageMatch[1];
           img.classList.add('message-image');
-          img.alt = 'Wikipedia Image';
+          img.alt = 'Image';
           img.loading = 'lazy';
           img.onerror = function() { this.style.display = 'none'; };
           bubbleDiv.appendChild(img);
@@ -289,11 +274,9 @@ I chat naturally with you!</div>
         typingDiv.classList.add('message', 'assistant', 'typing-indicator-wrapper');
         typingDiv.innerHTML = `
           <div class="typing-indicator">
-            <div class="typing-dots">
-              <div class="typing-dot"></div>
-              <div class="typing-dot"></div>
-              <div class="typing-dot"></div>
-            </div>
+            <svg class="infinity-loader" viewBox="0 0 100 40">
+              <path d="M20,20 Q30,5 40,20 T60,20 T80,20" />
+            </svg>
           </div>
         `;
         chatDiv.appendChild(typingDiv);
@@ -323,6 +306,7 @@ I chat naturally with you!</div>
         return !str || str.trim().length === 0;
       }
 
+      // Note API integration
       async function callNoteAPI(message) {
         try {
           const response = await fetch(NOTE_API_URL, {
@@ -335,11 +319,11 @@ I chat naturally with you!</div>
           });
 
           if (!response.ok) {
-            throw new Error(`API Error: ${response.status}`);
+            throw new Error(`API Error: ${response.status} ${response.statusText}`);
           }
 
           const data = await response.json();
-          return data.reply;
+          return data.reply || data.response || "I'm sorry, I couldn't process that request.";
         } catch (error) {
           console.error('Note API Error:', error);
           throw error;
@@ -350,22 +334,34 @@ I chat naturally with you!</div>
         const messageText = userInput.value.trim();
         if (isEmpty(messageText)) return;
         
+        // Disable input while processing
         userInput.disabled = true;
         sendBtn.disabled = true;
         
+        // Add user message
         addMessage(messageText, "user");
         userInput.value = '';
         
+        // Show typing indicator
         const typingIndicator = showTypingIndicator();
         
         try {
+          // Call Note API
           const response = await callNoteAPI(messageText);
+          
+          // Hide typing indicator
           hideTypingIndicator(typingIndicator);
+          
+          // Add assistant response
           addMessage(response, "assistant");
         } catch (error) {
+          // Hide typing indicator
           hideTypingIndicator(typingIndicator);
+          
+          // Show error message
           addMessage("Sorry, I encountered an error. Please try again!", "assistant");
         } finally {
+          // Re-enable input
           userInput.disabled = false;
           sendBtn.disabled = false;
           userInput.focus();
@@ -387,16 +383,19 @@ I chat naturally with you!</div>
         }
       }
 
+      // Event listeners
       sendBtn.addEventListener('click', handleSendMessage);
       userInput.addEventListener('keypress', handleKeyPress);
       scrollToBottomBtn.addEventListener('click', scrollToBottom);
       
+      // Throttled scroll handler for performance
       let scrollTimeout;
       chatContainer.addEventListener('scroll', () => {
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(handleScroll, 100);
       });
 
+      // Focus input on load
       userInput.focus();
     });
   </script>
